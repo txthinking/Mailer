@@ -1,4 +1,4 @@
 SMailer
 =======
 
-a lightweight PHP smtp mail sender
+A lightweight SMTP mail sender
