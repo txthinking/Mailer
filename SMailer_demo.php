@@ -1,10 +1,10 @@
 <?php
 /**
-* @file SMailer_demo.php
-* @brief
-* @author cloud@txthinking.com
-* @version 0.0.1
-* @date 2012-07-25
+ * @file SMailer_demo.php
+ * @brief
+ * @author cloud@txthinking.com
+ * @version 0.0.1
+ * @date 2012-07-25
  */
 
 require "SMailer.php";
