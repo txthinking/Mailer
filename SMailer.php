@@ -168,14 +168,6 @@ class SMailer{
 	}
 
 	/**
-	 * set message charset
-	 * @param unknown_type $charset
-	 */
-	public function setCharset($charset){
-		$this->charset = $charset;
-	}
-
-	/**
 	 * send mail
 	 * @return boolean
 	 */
@@ -329,61 +321,17 @@ class SMailer{
 		if ($this->getCode() != 354){
 			return false;
 		}
-
     	$this->body = chunk_split(base64_encode($this->body));
 
-    	$this->createHeader();
     	$in = '';
+    	$this->createHeader();
 		foreach ($this->header as $k=>$v){
 			$in .= $k . ': ' . $v . $this->CRLF;
 		}
 		if (empty($this->attachment)){
-			$in .= "Content-Type: multipart/alternative; boundary=\"$this->boundaryAlternative\"" . $this->CRLF;
-			$in .= $this->CRLF;
-			$in .= "--" . $this->boundaryAlternative . $this->CRLF;
-			$in .= "Content-Type: text/plain; charset=\"" . $this->charset . "\"" . $this->CRLF;
-			$in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
-			$in .= $this->CRLF;
-			$in .= $this->body . $this->CRLF;
-			$in .= $this->CRLF;
-			$in .= "--" . $this->boundaryAlternative . $this->CRLF;
-			$in .= "Content-Type: text/html; charset=\"" . $this->charset ."\"" . $this->CRLF;
-			$in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
-			$in .= $this->CRLF;
-			$in .= $this->body . $this->CRLF;
-			$in .= $this->CRLF;
-			$in .= "--" . $this->boundaryAlternative . "--" . $this->CRLF;
+            $in .= $this->createBody();
 		}else {
-			$in .= $this->CRLF;
-			$in .= $this->CRLF;
-			$in .= '--' . $this->boundaryMixed . $this->CRLF;
-			$in .= "Content-Type: multipart/alternative; boundary=\"$this->boundaryAlternative\"" . $this->CRLF;
-			$in .= $this->CRLF;
-			$in .= "--" . $this->boundaryAlternative . $this->CRLF;
-			$in .= "Content-Type: text/plain; charset=\"" . $this->charset . "\"" . $this->CRLF;
-			$in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
-			$in .= $this->CRLF;
-			$in .= $this->body . $this->CRLF;
-			$in .= $this->CRLF;
-			$in .= "--" . $this->boundaryAlternative . $this->CRLF;
-			$in .= "Content-Type: text/html; charset=\"" . $this->charset ."\"" . $this->CRLF;
-			$in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
-			$in .= $this->CRLF;
-			$in .= $this->body . $this->CRLF;
-			$in .= $this->CRLF;
-			$in .= "--" . $this->boundaryAlternative . "--" . $this->CRLF;
-			foreach ($this->attachment as $k=>$v){
-				$in .= $this->CRLF;
-				$in .= '--' . $this->boundaryMixed . $this->CRLF;
-				$in .= "Content-Type: application/octet-stream; name=\"". $k ."\"" . $this->CRLF;
-				$in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
-				$in .= "Content-Disposition: attachment; filename=\"" . $k . "\"" . $this->CRLF;
-				$in .= $this->CRLF;
-				$in .= chunk_split(base64_encode(file_get_contents($v))) . $this->CRLF;
-			}
-			$in .= $this->CRLF;
-			$in .= $this->CRLF;
-			$in .= '--' . $this->boundaryMixed . '--' . $this->CRLF;
+            $in .= $this->createBodyWithAttachment();
 		}
 		$in .= $this->CRLF;
 		$in .= $this->CRLF . '.' . $this->CRLF;
@@ -394,57 +342,121 @@ class SMailer{
 		return true;
 	}
 
-	/**
-	 * SMTP QUIT
-	 * SUCCESS 221
-	 * @return boolean
-	 */
-	protected function quit(){
-		$in = "QUIT" . $this->CRLF;
-		fputs($this->smtp, $in, strlen($in));
-		if ($this->getCode() != 221){
-			return false;
-		}
-		return true;
-	}
+    /**
+     * @brief createBody create body
+     *
+     * @return
+     */
+    protected function createBody(){
+        $in = "";
+        $in .= "Content-Type: multipart/alternative; boundary=\"$this->boundaryAlternative\"" . $this->CRLF;
+        $in .= $this->CRLF;
+        $in .= "--" . $this->boundaryAlternative . $this->CRLF;
+        $in .= "Content-Type: text/plain; charset=\"" . $this->charset . "\"" . $this->CRLF;
+        $in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
+        $in .= $this->CRLF;
+        $in .= $this->body . $this->CRLF;
+        $in .= $this->CRLF;
+        $in .= "--" . $this->boundaryAlternative . $this->CRLF;
+        $in .= "Content-Type: text/html; charset=\"" . $this->charset ."\"" . $this->CRLF;
+        $in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
+        $in .= $this->CRLF;
+        $in .= $this->body . $this->CRLF;
+        $in .= $this->CRLF;
+        $in .= "--" . $this->boundaryAlternative . "--" . $this->CRLF;
+        return $in;
+    }
 
-	/**
-	 * create message header
-	 */
-	protected function createHeader(){
-		$this->header['Date'] = date('r');
-		$this->header['Return-Path'] = $this->from['email'];
-		$this->header['From'] = $this->from['name'] . " <" . $this->from['email'] .">";
-		$this->header['To'] = '';
-		foreach ($this->to as $k=>$v){
-			$this->header['To'] .= $k . " <" . $v . ">, ";
-		}
-		$this->header['To'] = substr($this->header['To'], 0, -2);
-		$this->header['Subject'] = $this->subject;
-		$this->header['Message-ID'] = '<' . md5('TX'.md5(time()).uniqid()) . '@' . $this->username . '>';
-		$this->header['X-Priority'] = '3';
-		$this->header['X-Mailer'] = 'SMailer '. $this->version . '(https://github.com/txthinking/SMailer)';
-		$this->header['MIME-Version'] = '1.0';
-		if (!empty($this->attachment)){
-			$this->boundaryMixed = md5(md5(time().'SMailer').uniqid());
-			$this->header['Content-Type'] = "multipart/mixed; \r\n\tboundary=\"" . $this->boundaryMixed . "\"";
-		}
-		$this->boundaryAlternative = md5(md5(time().'SMailer').uniqid());
-	}
+    /**
+     * @brief createBodyWithAttachment create body with attachment
+     *
+     * @return body
+     */
+    protected function createBodyWithAttachment(){
+        $in = "";
+        $in .= $this->CRLF;
+        $in .= $this->CRLF;
+        $in .= '--' . $this->boundaryMixed . $this->CRLF;
+        $in .= "Content-Type: multipart/alternative; boundary=\"$this->boundaryAlternative\"" . $this->CRLF;
+        $in .= $this->CRLF;
+        $in .= "--" . $this->boundaryAlternative . $this->CRLF;
+        $in .= "Content-Type: text/plain; charset=\"" . $this->charset . "\"" . $this->CRLF;
+        $in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
+        $in .= $this->CRLF;
+        $in .= $this->body . $this->CRLF;
+        $in .= $this->CRLF;
+        $in .= "--" . $this->boundaryAlternative . $this->CRLF;
+        $in .= "Content-Type: text/html; charset=\"" . $this->charset ."\"" . $this->CRLF;
+        $in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
+        $in .= $this->CRLF;
+        $in .= $this->body . $this->CRLF;
+        $in .= $this->CRLF;
+        $in .= "--" . $this->boundaryAlternative . "--" . $this->CRLF;
+        foreach ($this->attachment as $k=>$v){
+            $in .= $this->CRLF;
+            $in .= '--' . $this->boundaryMixed . $this->CRLF;
+            $in .= "Content-Type: application/octet-stream; name=\"". $k ."\"" . $this->CRLF;
+            $in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
+            $in .= "Content-Disposition: attachment; filename=\"" . $k . "\"" . $this->CRLF;
+            $in .= $this->CRLF;
+            $in .= chunk_split(base64_encode(file_get_contents($v))) . $this->CRLF;
+        }
+        $in .= $this->CRLF;
+        $in .= $this->CRLF;
+        $in .= '--' . $this->boundaryMixed . '--' . $this->CRLF;
+        return $in;
+    }
+    /**
+     * SMTP QUIT
+     * SUCCESS 221
+     * @return boolean
+     */
+    protected function quit(){
+        $in = "QUIT" . $this->CRLF;
+        fputs($this->smtp, $in, strlen($in));
+        if ($this->getCode() != 221){
+            return false;
+        }
+        return true;
+    }
 
-	/**
-	 * get smtp response code
-	 * once time has three digital and a space
-	 * @return int
-	 */
-	protected function getCode() {
-	    $this->message['now'] = "";
-	    while($str = @fgets($this->smtp,515)) {
-	    	$this->message['all'] .= $str;
-	    	$this->message['now'] .= $str;
-	        if(substr($str,3,1) == " ") {
-	      	    return substr($str,0,3);
-	        }
+    /**
+     * create message header
+     */
+    protected function createHeader(){
+        $this->header['Date'] = date('r');
+        $this->header['Return-Path'] = $this->from['email'];
+        $this->header['From'] = $this->from['name'] . " <" . $this->from['email'] .">";
+        $this->header['To'] = '';
+        foreach ($this->to as $k=>$v){
+            $this->header['To'] .= $k . " <" . $v . ">, ";
+        }
+        $this->header['To'] = substr($this->header['To'], 0, -2);
+        $this->header['Subject'] = $this->subject;
+        $this->header['Message-ID'] = '<' . md5('TX'.md5(time()).uniqid()) . '@' . $this->username . '>';
+        $this->header['X-Priority'] = '3';
+        $this->header['X-Mailer'] = 'SMailer '. $this->version . '(https://github.com/txthinking/SMailer)';
+        $this->header['MIME-Version'] = '1.0';
+        if (!empty($this->attachment)){
+            $this->boundaryMixed = md5(md5(time().'SMailer').uniqid());
+            $this->header['Content-Type'] = "multipart/mixed; \r\n\tboundary=\"" . $this->boundaryMixed . "\"";
+        }
+        $this->boundaryAlternative = md5(md5(time().'SMailer').uniqid());
+    }
+
+    /**
+     * get smtp response code
+     * once time has three digital and a space
+     * @return int
+     */
+    protected function getCode() {
+        $this->message['now'] = "";
+        while($str = @fgets($this->smtp,515)) {
+            $this->message['all'] .= $str;
+            $this->message['now'] .= $str;
+            if(substr($str,3,1) == " ") {
+                return substr($str,0,3);
+            }
         }
         return false;
     }
