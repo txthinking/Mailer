@@ -16,15 +16,15 @@ $mail->setServer('smtp.example.com', 25); // no ssl
 $mail->setAuth('you@example.com', 'aaaaaaaa');
 $mail->setFrom('You', 'you@example.com');
 
-$mail->setTo('Tom', 'tom@gmail.com'); // you can repleat this for send to more people
+// you can repleat this for send to more people, name must be unique
+$mail->setTo('Tom', 'tom@gmail.com');
 $mail->setTo('Jerry', 'jerry@gmail.com');
 
 $mail->setSubject('Test');
 $mail->setBody('Hi, I love you.');
 
-$mail->setAttachment('love.png', '/tmp/hello.png'); // you can repleat this for add more attachment
+// you can repleat this for add more attachment, name must be unique
+$mail->setAttachment('love.png', '/tmp/hello.png');
 $mail->setAttachment('you.png', '/tmp/world.png');
-
-$mail->setHtml(true);
 
 var_dump($mail->send());

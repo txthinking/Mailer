@@ -3,7 +3,7 @@
  *
  *  SMailer (https://github.com/txthinking/SMailer)
  *
- *  Implement RFC 0821
+ *  Implement RFC0821, RFC0822, RFC1869, RFC2045, RFC2821
  *
 \***************************************************/
 /**
@@ -63,10 +63,6 @@ class SMailer{
 	 */
 	protected $charset;
 	/**
-	 * is html
-	 */
-	protected $isHtml;
-	/**
 	 * message header
 	 */
 	protected $header;
@@ -99,7 +95,6 @@ class SMailer{
 		$this->to = array();
 		$this->attachment = array();
 		$this->charset =  "UTF-8";
-		$this->isHtml = false;
 		$this->header = array();
 		$this->CRLF = "\r\n";
 		$this->message = array();
@@ -178,14 +173,6 @@ class SMailer{
 	 */
 	public function setCharset($charset){
 		$this->charset = $charset;
-	}
-
-	/**
-	 * set html message
-	 * @param boolean $isHtml
-	 */
-	public function setHtml($isHtml=false){
-		$this->isHtml = $isHtml;
 	}
 
 	/**
@@ -343,9 +330,7 @@ class SMailer{
 			return false;
 		}
 
-		$this->body = str_replace("\r\n","\n",$this->body);
-    	$this->body = str_replace("\r","\n",$this->body);
-    	$this->body = chunk_split($this->body);
+    	$this->body = chunk_split(base64_encode($this->body));
 
     	$this->createHeader();
     	$in = '';
@@ -357,13 +342,13 @@ class SMailer{
 			$in .= $this->CRLF;
 			$in .= "--" . $this->boundaryAlternative . $this->CRLF;
 			$in .= "Content-Type: text/plain; charset=\"" . $this->charset . "\"" . $this->CRLF;
-			$in .= "Content-Transfer-Encoding: 8bit" . $this->CRLF;
+			$in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
 			$in .= $this->CRLF;
 			$in .= $this->body . $this->CRLF;
 			$in .= $this->CRLF;
 			$in .= "--" . $this->boundaryAlternative . $this->CRLF;
 			$in .= "Content-Type: text/html; charset=\"" . $this->charset ."\"" . $this->CRLF;
-			$in .= "Content-Transfer-Encoding: 8bit" . $this->CRLF;
+			$in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
 			$in .= $this->CRLF;
 			$in .= $this->body . $this->CRLF;
 			$in .= $this->CRLF;
@@ -376,13 +361,13 @@ class SMailer{
 			$in .= $this->CRLF;
 			$in .= "--" . $this->boundaryAlternative . $this->CRLF;
 			$in .= "Content-Type: text/plain; charset=\"" . $this->charset . "\"" . $this->CRLF;
-			$in .= "Content-Transfer-Encoding: 8bit" . $this->CRLF;
+			$in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
 			$in .= $this->CRLF;
 			$in .= $this->body . $this->CRLF;
 			$in .= $this->CRLF;
 			$in .= "--" . $this->boundaryAlternative . $this->CRLF;
 			$in .= "Content-Type: text/html; charset=\"" . $this->charset ."\"" . $this->CRLF;
-			$in .= "Content-Transfer-Encoding: 8bit" . $this->CRLF;
+			$in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
 			$in .= $this->CRLF;
 			$in .= $this->body . $this->CRLF;
 			$in .= $this->CRLF;
