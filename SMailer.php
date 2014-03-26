@@ -10,7 +10,7 @@
  * @file SMailer.php
  * @brief SMailer Class
  * @author cloud@txthinking.com
- * @version 0.9.2
+ * @version 0.9.5
  * @date 2012-07-25
  */
 class SMailer{
@@ -42,6 +42,10 @@ class SMailer{
      * from email
      */
     protected $from;
+    /**
+     * the fake from email
+     */
+    protected $fakeFrom;
     /**
      * to email
      */
@@ -85,13 +89,14 @@ class SMailer{
     /**
      * SMailer version
      */
-    public $version = 'v0.9.2';
+    public $version = 'v0.9.5';
 
     /**
      * construct function
      */
     public function __construct(){
         $this->from = array();
+        $this->fakeFrom = array();
         $this->to = array();
         $this->attachment = array();
         $this->charset =  "UTF-8";
@@ -135,6 +140,16 @@ class SMailer{
     }
 
     /**
+     * set fake mail from
+     * @param string $name
+     * @param string $email
+     */
+    public function setFakeFrom($name, $email){
+        $this->fakeFrom['name'] = $name;
+        $this->fakeFrom['email'] = $email;
+    }
+
+    /**
      * set mail receiver
      * @param string $name
      * @param string $email
@@ -174,32 +189,41 @@ class SMailer{
     public function send(){
 
         if (!$this->connect()){
+            throw new Exception($this->message['now']);
             return false;
         }
         if (!$this->ehlo()){
+            throw new Exception($this->message['now']);
             return false;
         }
         if ($this->secure == 'tls'){
             if(!$this->starttls()){
+                throw new Exception($this->message['now']);
                 return false;
             }
             if (!$this->ehlo()){
+                throw new Exception($this->message['now']);
                 return false;
             }
         }
         if (!$this->authLogin()){
+            throw new Exception($this->message['now']);
             return false;
         }
         if (!$this->mailFrom()){
+            throw new Exception($this->message['now']);
             return false;
         }
         if (!$this->rcptTo()){
+            throw new Exception($this->message['now']);
             return false;
         }
         if (!$this->data()){
+            throw new Exception($this->message['now']);
             return false;
         }
         if (!$this->quit()){
+            throw new Exception($this->message['now']);
             return false;
         }
         return fclose($this->smtp);
@@ -425,8 +449,13 @@ class SMailer{
      */
     protected function createHeader(){
         $this->header['Date'] = date('r');
-        $this->header['Return-Path'] = $this->from['email'];
-        $this->header['From'] = $this->from['name'] . " <" . $this->from['email'] .">";
+        if(!empty($this->fakeFrom)){
+            $this->header['Return-Path'] = $this->fakeFrom['email'];
+            $this->header['From'] = $this->fakeFrom['name'] . " <" . $this->fakeFrom['email'] .">";
+        }else{
+            $this->header['Return-Path'] = $this->from['email'];
+            $this->header['From'] = $this->from['name'] . " <" . $this->from['email'] .">";
+        }
         $this->header['To'] = '';
         foreach ($this->to as $k=>$v){
             $this->header['To'] .= $k . " <" . $v . ">, ";

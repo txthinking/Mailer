@@ -16,6 +16,7 @@ $mail->setServer('smtp.example.com', 25); // no ssl
 
 $mail->setAuth('you@example.com', 'password');
 $mail->setFrom('You', 'you@example.com');
+// $mail->setFakeFrom('A Fake Name', 'a_fake_email@xxx.com'); // if you want use fake from then extra add this line
 
 // Repleat for more people, name must be unique
 $mail->setTo('Tom', 'tom@gmail.com');
