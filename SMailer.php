@@ -3,16 +3,13 @@
  *
  *  SMailer (https://github.com/txthinking/SMailer)
  *
+ *  A lightweight PHP SMTP mail sender.
  *  Implement RFC0821, RFC0822, RFC1869, RFC2045, RFC2821
+ *  Create Date 2012-07-25. Current Version v0.9.6.
+ *
+ *  Under the MIT license.
  *
  \***************************************************/
-/**
- * @file SMailer.php
- * @brief SMailer Class
- * @author cloud@txthinking.com
- * @version 0.9.5
- * @date 2012-07-25
- */
 class SMailer{
     /**
      * smtp socket
@@ -89,7 +86,7 @@ class SMailer{
     /**
      * SMailer version
      */
-    public $version = 'v0.9.5';
+    public $version = 'v0.9.6';
 
     /**
      * construct function
@@ -102,9 +99,7 @@ class SMailer{
         $this->charset =  "UTF-8";
         $this->header = array();
         $this->CRLF = "\r\n";
-        $this->message = array();
-        $this->message['all'] = '';
-        $this->message['now'] = '';
+        $this->message = "";
     }
 
     /**
@@ -187,43 +182,33 @@ class SMailer{
      * @return boolean
      */
     public function send(){
-
         if (!$this->connect()){
-            throw new Exception($this->message['now']);
             return false;
         }
         if (!$this->ehlo()){
-            throw new Exception($this->message['now']);
             return false;
         }
         if ($this->secure == 'tls'){
             if(!$this->starttls()){
-                throw new Exception($this->message['now']);
                 return false;
             }
             if (!$this->ehlo()){
-                throw new Exception($this->message['now']);
                 return false;
             }
         }
         if (!$this->authLogin()){
-            throw new Exception($this->message['now']);
             return false;
         }
         if (!$this->mailFrom()){
-            throw new Exception($this->message['now']);
             return false;
         }
         if (!$this->rcptTo()){
-            throw new Exception($this->message['now']);
             return false;
         }
         if (!$this->data()){
-            throw new Exception($this->message['now']);
             return false;
         }
         if (!$this->quit()){
-            throw new Exception($this->message['now']);
             return false;
         }
         return fclose($this->smtp);
@@ -479,14 +464,15 @@ class SMailer{
      * @return int
      */
     protected function getCode() {
-        $this->message['now'] = "";
+        $message = "";
         while($str = @fgets($this->smtp,515)) {
-            $this->message['all'] .= $str;
-            $this->message['now'] .= $str;
+            $this->message .= $str;
+            $message .= $str;
             if(substr($str,3,1) == " ") {
                 return substr($str,0,3);
             }
         }
+        throw new Exception($message);
         return false;
     }
 }
