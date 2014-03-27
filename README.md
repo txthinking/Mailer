@@ -14,7 +14,7 @@ $mail->setFrom('You', 'you@example.com');
 $mail->setTo('Tom', 'tom@gmail.com');
 
 $mail->setSubject('Test');
-$mail->setBody('Hi, I love you.');
+$mail->setBody('Hi, I <strong>love</strong> you.');
 $mail->setAttachment('you.png', '/tmp/world.png');
 
 var_dump($mail->send());

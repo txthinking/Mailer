@@ -5,8 +5,14 @@
  *
  *  A lightweight PHP SMTP mail sender.
  *  Implement RFC0821, RFC0822, RFC1869, RFC2045, RFC2821
- *  Create Date 2012-07-25. Current Version v0.9.6.
  *
+ *  Support html body, don't worry that the receiver's
+ *  mail client can't support html, because SMailer will
+ *  send both text/plain and text/html body, so if the
+ *  mail client can't support html, it will display the
+ *  text/plain body.
+ *
+ *  Create Date 2012-07-25. Current Version v0.9.6.
  *  Under the MIT license.
  *
  \***************************************************/
@@ -104,9 +110,9 @@ class SMailer{
 
     /**
      * set server and port
-     * @param unknown_type $host server
-     * @param unknown_type $port port
-     * @param unknown_type $secure ssl tls
+     * @param string $host server
+     * @param int $port port
+     * @param string $secure ssl tls
      */
     public function setServer($host, $port, $secure=null){
         $this->host = $host;
@@ -116,8 +122,8 @@ class SMailer{
 
     /**
      * auth with server
-     * @param unknown_type $username
-     * @param unknown_type $password
+     * @param string $username
+     * @param string $password
      */
     public function setAuth($username, $password){
         $this->username = $username;
@@ -155,7 +161,7 @@ class SMailer{
 
     /**
      * set mail subject
-     * @param unknown_type $subject
+     * @param string $subject
      */
     public function setSubject($subject){
         $this->subject = $subject;
@@ -163,7 +169,7 @@ class SMailer{
 
     /**
      * set mail body
-     * @param unknown_type $body
+     * @param string $body
      */
     public function setBody($body){
         $this->body = $body;
@@ -171,17 +177,29 @@ class SMailer{
 
     /**
      * set mail attachment
-     * @param unknown_type $attachment
+     * @param string $attachment
      */
     public function setAttachment($name, $path){
         $this->attachment[$name] = $path;
     }
 
     /**
+     *  send
+     * @return bool
+     */
+    public function send(){
+        if($this->doSend() === false){
+            throw new Exception($this->message);
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * send mail
      * @return boolean
      */
-    public function send(){
+    protected function doSend(){
         if (!$this->connect()){
             return false;
         }
@@ -464,15 +482,12 @@ class SMailer{
      * @return int
      */
     protected function getCode() {
-        $message = "";
         while($str = @fgets($this->smtp,515)) {
             $this->message .= $str;
-            $message .= $str;
             if(substr($str,3,1) == " ") {
                 return substr($str,0,3);
             }
         }
-        throw new Exception($message);
         return false;
     }
 }

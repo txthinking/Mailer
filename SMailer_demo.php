@@ -23,7 +23,7 @@ $mail->setTo('Tom', 'tom@gmail.com');
 $mail->setTo('Jerry', 'jerry@gmail.com');
 
 $mail->setSubject('Test');
-$mail->setBody('Hi, I love you.');
+$mail->setBody('Hi, I <strong>love</strong> you.');
 
 // Repleat for more attachment, name must be unique
 $mail->setAttachment('love.png', '/tmp/hello.png');
