@@ -4,8 +4,8 @@ Mailer
 A lightweight SMTP mail sender
 
 ```
-require "SMailer.php";
-$mail = new SMailer();
+require "Mailer.php";
+$mail = new Mailer();
 
 $mail->setServer('smtp.example.com', 25);
 $mail->setAuth('you@example.com', 'password');
