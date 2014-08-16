@@ -1,4 +1,4 @@
-SMailer
+Mailer
 =======
 
 A lightweight SMTP mail sender
