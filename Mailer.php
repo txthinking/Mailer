@@ -1,22 +1,22 @@
 <?php
 /***************************************************\
  *
- *  SMailer (https://github.com/txthinking/SMailer)
+ *  Mailer (https://github.com/txthinking/Mailer)
  *
  *  A lightweight PHP SMTP mail sender.
  *  Implement RFC0821, RFC0822, RFC1869, RFC2045, RFC2821
  *
  *  Support html body, don't worry that the receiver's
- *  mail client can't support html, because SMailer will
+ *  mail client can't support html, because Mailer will
  *  send both text/plain and text/html body, so if the
  *  mail client can't support html, it will display the
  *  text/plain body.
  *
- *  Create Date 2012-07-25. Current Version v0.9.6.
+ *  Create Date 2012-07-25.
  *  Under the MIT license.
  *
  \***************************************************/
-class SMailer{
+class Mailer{
     /**
      * smtp socket
      */
@@ -90,7 +90,7 @@ class SMailer{
      */
     protected $message;
     /**
-     * SMailer version
+     * Mailer version
      */
     public $version = 'v0.9.6';
 
@@ -467,13 +467,13 @@ class SMailer{
         $this->header['Subject'] = $this->subject;
         $this->header['Message-ID'] = '<' . md5('TX'.md5(time()).uniqid()) . '@' . $this->username . '>';
         $this->header['X-Priority'] = '3';
-        $this->header['X-Mailer'] = 'SMailer '. $this->version . '(https://github.com/txthinking/SMailer)';
+        $this->header['X-Mailer'] = 'Mailer '. $this->version . '(https://github.com/txthinking/Mailer)';
         $this->header['MIME-Version'] = '1.0';
         if (!empty($this->attachment)){
-            $this->boundaryMixed = md5(md5(time().'SMailer').uniqid());
+            $this->boundaryMixed = md5(md5(time().'Mailer').uniqid());
             $this->header['Content-Type'] = "multipart/mixed; \r\n\tboundary=\"" . $this->boundaryMixed . "\"";
         }
-        $this->boundaryAlternative = md5(md5(time().'SMailer').uniqid());
+        $this->boundaryAlternative = md5(md5(time().'Mailer').uniqid());
     }
 
     /**

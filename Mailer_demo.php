@@ -1,15 +1,15 @@
 <?php
 /**
- * @file SMailer_demo.php
+ * @file Mailer_demo.php
  * @brief
  * @author cloud@txthinking.com
  * @version 0.0.1
  * @date 2012-07-25
  */
 
-require "SMailer.php";
+require "Mailer.php";
 
-$mail = new SMailer();
+$mail = new Mailer();
 
 $mail->setServer('smtp.example.com', 25); // no ssl
 //$mail->setServer('smtp.txthinking.com', 465, 'ssl'); // use ssl
