@@ -1,5 +1,5 @@
 {
-    "name": "txthinking/Mailer",
+    "name": "txthinking/mailer",
     "type": "library",
     "keywords": ["mail", "smtp"],
     "description": "A very lightweight PHP SMTP mail sender",
