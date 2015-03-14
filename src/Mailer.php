@@ -91,10 +91,6 @@ class Mailer{
      * responce message
      */
     protected $message;
-    /**
-     * Mailer version
-     */
-    public $version = 'v1.0.0';
 
     /**
      * construct function
@@ -469,7 +465,7 @@ class Mailer{
         $this->header['Subject'] = $this->subject;
         $this->header['Message-ID'] = '<' . md5('TX'.md5(time()).uniqid()) . '@' . $this->username . '>';
         $this->header['X-Priority'] = '3';
-        $this->header['X-Mailer'] = 'Mailer '. $this->version . '(https://github.com/txthinking/Mailer)';
+        $this->header['X-Mailer'] = 'Mailer (https://github.com/txthinking/Mailer)';
         $this->header['MIME-Version'] = '1.0';
         if (!empty($this->attachment)){
             $this->boundaryMixed = md5(md5(time().'Mailer').uniqid());
