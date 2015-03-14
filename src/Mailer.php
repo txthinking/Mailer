@@ -16,6 +16,8 @@
  *  Under the MIT license.
  *
  \***************************************************/
+use Exception;
+
 class Mailer{
     /**
      * smtp socket
