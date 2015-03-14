@@ -1,0 +1,26 @@
+{
+    "name": "txthinking/Mailer",
+    "type": "library",
+    "keywords": ["mail", "smtp"],
+    "description": "A very lightweight PHP SMTP mail sender",
+    "license": "MIT",
+    "homepage": "http://github.com/txthinking/Mailer",
+    "authors": [
+        {
+            "name": "Cloud",
+            "email": "cloud@txthinking.com",
+            "homepage": "http://www.txthinking.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.2"
+    },
+    "require-dev": {
+    },
+    "autoload": {
+        "psr-4": {
+            "Tx\\": "src/"
+        }
+    }
+}

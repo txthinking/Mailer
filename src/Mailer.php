@@ -1,4 +1,4 @@
-<?php
+<?php namespace Tx;
 /***************************************************\
  *
  *  Mailer (https://github.com/txthinking/Mailer)
@@ -92,7 +92,7 @@ class Mailer{
     /**
      * Mailer version
      */
-    public $version = 'v0.9.6';
+    public $version = 'v1.0.0';
 
     /**
      * construct function
