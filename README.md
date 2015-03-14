@@ -3,19 +3,25 @@ Mailer
 
 A lightweight SMTP mail sender
 
+### Install
+
 ```
-require "Mailer.php";
+$ composer require txthinking/mailer
+```
+
+### Usage
+
+```
+<?php
+use Tx\Mailer;
+
 $mail = new Mailer();
-
-$mail->setServer('smtp.example.com', 25);
-$mail->setAuth('you@example.com', 'password');
-$mail->setFrom('You', 'you@example.com');
-// $mail->setFakeFrom('A Fake Name', 'a_fake_email@xxx.com'); // if you want use fake from then extra add this line
-$mail->setTo('Tom', 'tom@gmail.com');
-
-$mail->setSubject('Test');
+$mail->setServer('smtp.ym.163.com', 25);
+$mail->setAuth('', ''); // email, password
+$mail->setFrom('You', ''); //your name, your email
+$mail->setTo('Cloud', 'cloud@txthinking.com');
+$mail->setSubject('Test Mailer');
 $mail->setBody('Hi, I <strong>love</strong> you.');
-$mail->setAttachment('you.png', '/tmp/world.png');
-
-var_dump($mail->send());
+$r = $mail->send();
+var_dump($r);
 ```
