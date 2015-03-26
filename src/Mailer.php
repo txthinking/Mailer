@@ -116,6 +116,7 @@ class Mailer{
         $this->host = $host;
         $this->port = $port;
         $this->secure = $secure;
+        return $this;
     }
 
     /**
@@ -126,6 +127,7 @@ class Mailer{
     public function setAuth($username, $password){
         $this->username = $username;
         $this->password = $password;
+        return $this;
     }
 
     /**
@@ -136,6 +138,7 @@ class Mailer{
     public function setFrom($name, $email){
         $this->from['name'] = $name;
         $this->from['email'] = $email;
+        return $this;
     }
 
     /**
@@ -146,6 +149,7 @@ class Mailer{
     public function setFakeFrom($name, $email){
         $this->fakeFrom['name'] = $name;
         $this->fakeFrom['email'] = $email;
+        return $this;
     }
 
     /**
@@ -155,6 +159,7 @@ class Mailer{
      */
     public function setTo($name, $email){
         $this->to[$name] = $email;
+        return $this;
     }
 
     /**
@@ -163,6 +168,7 @@ class Mailer{
      */
     public function setSubject($subject){
         $this->subject = $subject;
+        return $this;
     }
 
     /**
@@ -171,6 +177,7 @@ class Mailer{
      */
     public function setBody($body){
         $this->body = $body;
+        return $this;
     }
 
     /**
@@ -179,6 +186,7 @@ class Mailer{
      */
     public function setAttachment($name, $path){
         $this->attachment[$name] = $path;
+        return $this;
     }
 
     /**
@@ -188,7 +196,6 @@ class Mailer{
     public function send(){
         if($this->doSend() === false){
             throw new Exception($this->message);
-            return false;
         }
         return true;
     }
@@ -287,6 +294,12 @@ class Mailer{
      * @return boolean
      */
     protected function authLogin(){
+        if ($this->username === null && $this->password === null) {
+            // Unless the user has specifically set a username/password
+            // Do not try to authorize.
+            return true;
+        }
+
         $in = "AUTH LOGIN" . $this->CRLF;
         fputs($this->smtp, $in, strlen($in));
         if ($this->getCode() != 334){
@@ -395,7 +408,7 @@ class Mailer{
     /**
      * @brief createBodyWithAttachment create body with attachment
      *
-     * @return body
+     * @return string
      */
     protected function createBodyWithAttachment(){
         $in = "";
