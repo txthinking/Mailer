@@ -111,6 +111,7 @@ class Mailer{
      * @param string $host server
      * @param int $port port
      * @param string $secure ssl tls
+     * @return $this
      */
     public function setServer($host, $port, $secure=null){
         $this->host = $host;
@@ -123,6 +124,7 @@ class Mailer{
      * auth with server
      * @param string $username
      * @param string $password
+     * @return $this
      */
     public function setAuth($username, $password){
         $this->username = $username;
@@ -134,6 +136,7 @@ class Mailer{
      * set mail from
      * @param string $name
      * @param string $email
+     * @return $this
      */
     public function setFrom($name, $email){
         $this->from['name'] = $name;
@@ -145,6 +148,7 @@ class Mailer{
      * set fake mail from
      * @param string $name
      * @param string $email
+     * @return $this
      */
     public function setFakeFrom($name, $email){
         $this->fakeFrom['name'] = $name;
@@ -156,6 +160,7 @@ class Mailer{
      * set mail receiver
      * @param string $name
      * @param string $email
+     * @return $this
      */
     public function setTo($name, $email){
         $this->to[$name] = $email;
@@ -165,6 +170,7 @@ class Mailer{
     /**
      * set mail subject
      * @param string $subject
+     * @return $this
      */
     public function setSubject($subject){
         $this->subject = $subject;
@@ -174,6 +180,7 @@ class Mailer{
     /**
      * set mail body
      * @param string $body
+     * @return $this
      */
     public function setBody($body){
         $this->body = $body;
@@ -182,7 +189,10 @@ class Mailer{
 
     /**
      * set mail attachment
-     * @param string $attachment
+     * @param $name
+     * @param $path
+     * @return $this
+     * @internal param string $attachment
      */
     public function setAttachment($name, $path){
         $this->attachment[$name] = $path;
@@ -191,6 +201,7 @@ class Mailer{
 
     /**
      *  send
+     * @throws Exception
      * @return bool
      */
     public function send(){
@@ -383,7 +394,7 @@ class Mailer{
     /**
      * @brief createBody create body
      *
-     * @return
+     * @return string
      */
     protected function createBody(){
         $in = "";
