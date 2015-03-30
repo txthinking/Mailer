@@ -16,7 +16,6 @@
  *  Under the MIT license.
  *
  \***************************************************/
-use Exception;
 
 class Mailer{
     /**
@@ -187,10 +186,9 @@ class Mailer{
      */
     public function send(){
         if($this->doSend() === false){
-            throw new Exception($this->message);
-            return false;
+            return r(null, $this->message);
         }
-        return true;
+        return r(true);
     }
 
     /**

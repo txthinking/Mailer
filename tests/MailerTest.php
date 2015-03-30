@@ -10,7 +10,7 @@ class MailerTest extends TestCase{
         $mail->setSubject('Test Mailer');
         $mail->setBody('Hi, I <strong>love</strong> you.');
         $r = $mail->send();
-        $this->assertTrue($r);
+        $this->assertTrue($r['result']);
     }
 }
 
