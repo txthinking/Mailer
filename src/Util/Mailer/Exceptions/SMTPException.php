@@ -22,7 +22,7 @@ class SMTPException extends \Exception
     {
         parent::__construct($message);
         if(self::$logger !== null) {
-            self::$logger->addDebug("Exception triggered : " . $this->getMessage());
+            self::$logger->addDebug("SMTP Exception triggered : " . $this->getMessage());
         }
     }
 

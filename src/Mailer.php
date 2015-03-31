@@ -137,12 +137,11 @@ class Mailer{
     }
 
     /**
-     *  send
-     * @return $this
+     *  Send the message...
+     * @return boolean
      */
     public function send(){
-        $this->smtp->send($this->message);
-        return $this;
+        return $this->smtp->send($this->message);
     }
 
 }
