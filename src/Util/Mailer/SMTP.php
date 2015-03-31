@@ -172,7 +172,7 @@ class SMTP
     protected function connect(){
         $this->logger->addDebug("Connecting to {$this->host} at {$this->port}");
         $host = ($this->secure == 'ssl') ? 'ssl://' . $this->host : $this->host;
-        $this->smtp = fsockopen($host, $this->port);
+        $this->smtp = @fsockopen($host, $this->port);
         //set block mode
         //    stream_set_blocking($this->smtp, 1);
         if (!$this->smtp){
@@ -463,7 +463,9 @@ class SMTP
             $this->resultStack[] = $str;
             $this->message .= $str;
             if(substr($str,3,1) == " ") {
-                return substr($str,0,3);
+                $code = substr($str,0,3);
+                $this->logger->addDebug("Got a code of: {$code}");
+                return $code;
             }
         }
         throw new SMTPException("SMTP Server did not respond with anything I recognized");

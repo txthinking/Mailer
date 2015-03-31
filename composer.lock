@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "24985293b030400d2c3d07d639dc112d",
+    "hash": "6f23b14407b2e8daca111b6b0379a606",
     "packages": [
         {
             "name": "monolog/monolog",
@@ -172,6 +172,40 @@
                 "instantiate"
             ],
             "time": "2014-10-13 12:58:55"
+        },
+        {
+            "name": "erb/testing-tools",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://bitbucket.org/erblearn/testing-tools.git",
+                "reference": "05c7bd6b2a55ac0455c208cb2588babdfd09d9a3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://bitbucket.org/erblearn/testing-tools/get/05c7bd6b2a55ac0455c208cb2588babdfd09d9a3.zip",
+                "reference": "05c7bd6b2a55ac0455c208cb2588babdfd09d9a3",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ERB\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matt Sowers",
+                    "email": "msowers@erblearn.org"
+                }
+            ],
+            "description": "Tools to make it easier to retrieve data from classes via Reflection.",
+            "homepage": "https://bitbucket.org/erblearn/testing-tools",
+            "time": "2015-03-31 18:07:12"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -1077,7 +1111,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "erb/testing-tools": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
