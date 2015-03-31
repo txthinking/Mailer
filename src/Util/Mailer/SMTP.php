@@ -445,7 +445,7 @@ class SMTP
         $this->header['X-Mailer'] = 'Mailer (https://github.com/txthinking/Mailer)';
         $this->header['MIME-Version'] = '1.0';
         if (!empty($this->attachment)){
-            $this->boundaryMixed = md5(md5(time().'ERBMailer').uniqid());
+            $this->boundaryMixed = md5(md5(time().'TxMailer').uniqid());
             $this->header['Content-Type'] = "multipart/mixed; \r\n\tboundary=\"" . $this->boundaryMixed . "\"";
         }
         $this->boundaryAlternative = md5(md5(time().'TXMailer').uniqid());

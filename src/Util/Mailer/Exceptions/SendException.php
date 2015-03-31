@@ -8,9 +8,7 @@
 
 namespace Tx\Util\Mailer\Exceptions;
 
-use ERB\Exceptions\ERBException;
-
-class SendException extends ERBException
+class SendException extends SMTPException
 {
 
 }
