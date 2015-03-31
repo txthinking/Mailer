@@ -191,9 +191,4 @@ class Message
         return $this->attachment;
     }
 
-
-
-
-
-
 }

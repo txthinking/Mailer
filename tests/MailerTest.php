@@ -1,10 +1,11 @@
 <?php
+
+namespace Tests;
+
 use Tx\Mailer;
 use \Tx\Util\Mailer\Exceptions\SMTPException;
 
-class MailerTest extends TestCase{
-
-
+class MailerTest extends \PHPUnit_Framework_TestCase {
     public function testSend(){
         try {
             $mail = new Mailer();
@@ -19,11 +20,10 @@ class MailerTest extends TestCase{
             $this->assertTrue($status);
         } catch (SMTPException $se) {
             $this->fail("A SMTP exception has been raised.  Mailer has failed. {$se->getMessage()}");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->fail("An Unknown exception has been raised.  Mailer has failed. {$e->getMessage()}");
         }
     }
-
 
 }
 
