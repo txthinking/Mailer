@@ -7,7 +7,6 @@ use \Tx\Util\Mailer\Exceptions\SMTPException;
 
 class MailerTest extends \PHPUnit_Framework_TestCase {
     public function testSend(){
-/**
         try {
             $mail = new Mailer();
             $mail->setServer('smtp.ym.163.com', 25);
@@ -24,7 +23,6 @@ class MailerTest extends \PHPUnit_Framework_TestCase {
         } catch (\Exception $e) {
             $this->fail("An Unknown exception has been raised.  Mailer has failed. {$e->getMessage()}");
         }
- **/
     }
 }
 
