@@ -35,7 +35,7 @@ try {
         ->setBody('for test');
 
     $status = $smtp->send($message);
-    $this->assertTrue($status);
+    var_dump($status);
 } catch (\Exception $e) {
     // error
 }
