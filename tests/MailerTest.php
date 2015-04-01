@@ -14,16 +14,16 @@ class MailerTest extends TestCase {
     protected $message;
 
     public function setup(){
-        $this->smtp = new SMTP();
+        $this->smtp = new SMTP(new Logger('SMTP'));
         $this->message = new Message();
     }
 
-    public function testSend(){
+    public function testSMTP(){
         try {
             $this->smtp->setServer('smtp.ym.163.com', 25)
                 ->setAuth('', ''); // email, password
 
-            $this->message->setFrom('Tom', '')
+            $this->message->setFrom('Tom', '') // your name, your email
                 ->setTo('Cloud', 'cloud@txthinking.com')
                 ->setSubject('hi')
                 ->setBody('for test');
@@ -35,6 +35,18 @@ class MailerTest extends TestCase {
         } catch (\Exception $e) {
             $this->fail("An Unknown exception has been raised.  Mailer has failed. {$e->getMessage()}");
         }
+    }
+
+    public function testSend(){
+        $status = (new Mailer(new Logger('Mailer')))
+            ->setServer('smtp.ym.163.com', 25)
+            ->setAuth('', '') // email, password
+            ->setFrom('You', '') //your name, your email
+            ->setTo('Cloud', 'cloud@txthinking.com')
+            ->setSubject('Test Mailer')
+            ->setBody('Hi, I <strong>love</strong> you.')
+            ->send();
+        $this->assertTrue($status);
     }
 
 }

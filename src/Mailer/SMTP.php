@@ -1,4 +1,21 @@
 <?php
+/***************************************************\
+ *
+ *  Mailer (https://github.com/txthinking/Mailer)
+ *
+ *  A lightweight PHP SMTP mail sender.
+ *  Implement RFC0821, RFC0822, RFC1869, RFC2045, RFC2821
+ *
+ *  Support html body, don't worry that the receiver's
+ *  mail client can't support html, because Mailer will
+ *  send both text/plain and text/html body, so if the
+ *  mail client can't support html, it will display the
+ *  text/plain body.
+ *
+ *  Create Date 2012-07-25.
+ *  Under the MIT license.
+ *
+ \***************************************************/
 
 namespace Tx\Mailer;
 
@@ -94,11 +111,7 @@ class SMTP
 
     public function __construct(Logger $logger=null)
     {
-        if ($logger === null) {
-            $this->logger = new Logger('Mailer');
-        }else{
-            $this->logger = $logger;
-        }
+        $this->logger = $logger;
     }
 
     /**
@@ -110,10 +123,10 @@ class SMTP
      */
     public function setServer($host, $port, $secure=null)
     {
-        $this->logger->addDebug("Setting the server");
         $this->host = $host;
         $this->port = $port;
         $this->secure = $secure;
+        $this->logger && $this->logger->addDebug("Set: the server");
         return $this;
     }
 
@@ -124,9 +137,9 @@ class SMTP
      * @return $this
      */
     public function setAuth($username, $password){
-        $this->logger->addDebug("Setting the auth");
         $this->username = $username;
         $this->password = $password;
+        $this->logger && $this->logger->addDebug("Set: the auth");
         return $this;
     }
 
@@ -140,7 +153,7 @@ class SMTP
      * @throws SMTPException
      */
     public function send(Message $message){
-        $this->logger->addDebug('Got the request to send the message');
+        $this->logger && $this->logger->addDebug('Set: a message will be sent');
         $this->mailMessage = $message;
         $this->connect()
             ->ehlo();
@@ -165,7 +178,7 @@ class SMTP
      * @throws SMTPException
      */
     protected function connect(){
-        $this->logger->addDebug("Connecting to {$this->host} at {$this->port}");
+        $this->logger && $this->logger->addDebug("Connecting to {$this->host} at {$this->port}");
         $host = ($this->secure == 'ssl') ? 'ssl://' . $this->host : $this->host;
         $this->smtp = @fsockopen($host, $this->port);
         //set block mode
@@ -442,6 +455,7 @@ class SMTP
     {
         $this->commandStack[] = $string;
         fputs($this->smtp, $string, strlen($string));
+        $this->logger && $this->logger->addDebug('Sent: '. $string);
         return $this->getCode();
     }
 
@@ -453,10 +467,10 @@ class SMTP
      */
     protected function getCode() {
         while ($str = fgets($this->smtp, 515)) {
+            $this->logger && $this->logger->addDebug("Got: ". $str);
             $this->resultStack[] = $str;
             if(substr($str,3,1) == " ") {
                 $code = substr($str,0,3);
-                $this->logger->addDebug("Got a code of: {$code}");
                 return $code;
             }
         }

@@ -9,8 +9,8 @@
 namespace Tests;
 
 
-use Tx\Util\Mailer\SMTP;
-use Tx\Util\Mailer\Message;
+use Tx\Mailer\SMTP;
+use Tx\Mailer\Message;
 use ERB\Testing\Tools\TestHelper;
 
 /**
@@ -73,7 +73,7 @@ class SMTPTest extends TestCase {
 
 
     /**
-     * @expectedException \Tx\Util\Mailer\Exceptions\SMTPException
+     * @expectedException \Tx\Mailer\Exceptions\SMTPException
      */
     public function testConnectSMTPException()
     {

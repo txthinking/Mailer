@@ -16,14 +16,16 @@
  *  Under the MIT license.
  *
  \***************************************************/
-use Tx\Mailer\Message;
-use Tx\Mailer\SMTP;
+
+use \Tx\Mailer\Message;
+use \Tx\Mailer\SMTP;
+use \Monolog\Logger;
 
 /**
  * Class Mailer
  *
  * This class provides the Mailer public methods for backwards compatibility, but it is recommended
- * that you use the Tx\Util\Mailer\SMTP and Tx\Util\Mailer\Message classes going forward
+ * that you use the Tx\Mailer\SMTP and Tx\Mailer\Message classes going forward
  *
  * @package Tx
  */
@@ -43,8 +45,8 @@ class Mailer{
     /**
      * construct function
      */
-    public function __construct(){
-        $this->smtp = new SMTP();
+    public function __construct(Logger $logger=null){
+        $this->smtp = new SMTP($logger);
         $this->message = new Message();
     }
 
