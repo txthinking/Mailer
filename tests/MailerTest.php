@@ -19,12 +19,12 @@ class MailerTest extends TestCase {
     public function testSMTP(){
         $this->smtp
             ->setServer('smtp.ym.163.com', 25)
-            ->setAuth('bot@ym.txthinking.com', '111111'); // email, password
+            ->setAuth('bot@ym.txthinking.com', ''); // email, password
 
         $this->message
             ->setFrom('Tom', 'bot@ym.txthinking.com') // your name, your email
             ->setFakeFrom('heelo', 'bot@baidu.com') // a fake name, a fake email
-            ->setTo('Cloud', 'cloud@txthinking.com')
+            ->setTo('神', 'cloud@txthinking.com')
             ->setSubject('Test SMTP ' . time())
             ->setBody('<h1>for test</h1>');
 
@@ -35,8 +35,8 @@ class MailerTest extends TestCase {
     public function testSend(){
         $status = (new Mailer(new Logger('Mailer')))
             ->setServer('smtp.ym.163.com', 25)
-            ->setAuth('bot@ym.txthinking.com', '111111') // email, password
-            ->setFrom('You', 'bot@ym.txthinking.com') //your name, your email
+            ->setAuth('bot@ym.txthinking.com', '') // email, password
+            ->setFrom('哈哈啊', 'bot@ym.txthinking.com') //your name, your email
             ->setTo('Cloud', 'cloud@txthinking.com')
             ->setSubject('Test Mailer '. time())
             ->setBody('Hi, I <strong>love</strong> you.')
