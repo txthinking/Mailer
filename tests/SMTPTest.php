@@ -6,9 +6,6 @@
  * Time: 10:57 AM
  */
 
-namespace Tests;
-
-
 use Tx\Mailer\SMTP;
 use Tx\Mailer\Message;
 use ERB\Testing\Tools\TestHelper;

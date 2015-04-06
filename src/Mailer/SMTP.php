@@ -57,26 +57,6 @@ class SMTP
     protected $password;
 
     /**
-     * charset
-     */
-    protected $charset = "UTF-8";
-
-    /**
-     * message header
-     */
-    protected $header = array();
-
-    /**
-     * header multipart boundaryMixed
-     */
-    protected $boundaryMixed;
-
-    /**
-     * header multipart alternative
-     */
-    protected $boundaryAlternative;
-
-    /**
      * $this->CRLF
      * @var string
      */
@@ -85,12 +65,7 @@ class SMTP
     /**
      * @var Message
      */
-    protected $mailMessage;
-
-    /**
-     * @var Logger
-     */
-    protected static $loggerStatic;
+    protected $message;
 
     /**
      * @var Logger - Used to make things prettier than self::$logger
@@ -154,7 +129,7 @@ class SMTP
      */
     public function send(Message $message){
         $this->logger && $this->logger->addDebug('Set: a message will be sent');
-        $this->mailMessage = $message;
+        $this->message = $message;
         $this->connect()
             ->ehlo();
 
@@ -271,7 +246,7 @@ class SMTP
      * @throws SMTPException
      */
     protected function mailFrom(){
-        $in = "MAIL FROM:<{$this->mailMessage->getFromEmail()}>" . $this->CRLF;
+        $in = "MAIL FROM:<{$this->message->getFromEmail()}>" . $this->CRLF;
         $code = $this->pushStack($in);
         if ($code !== '250') {
             throw new CodeException('250', $code, array_pop($this->resultStack));
@@ -287,7 +262,7 @@ class SMTP
      * @throws SMTPException
      */
     protected function rcptTo(){
-        foreach ($this->mailMessage->getTo() as $toName=>$toEmail) {
+        foreach ($this->message->getTo() as $toEmail) {
             $in = "RCPT TO:<" . $toEmail . ">" . $this->CRLF;
             $code = $this->pushStack($in);
             if ($code !== '250') {
@@ -311,95 +286,12 @@ class SMTP
         if ($code !== '354') {
             throw new CodeException('354', $code, array_pop($this->resultStack));
         }
-        $this->mailMessage->setBody(
-            chunk_split(base64_encode($this->mailMessage->getBody()))
-        );
-
-        $in = '';
-        $this->createHeader();
-        foreach ($this->header as $key => $value) {
-            $in .= $key . ': ' . $value . $this->CRLF;
-        }
-
-        $attachments = $this->mailMessage->getAttachment();
-        if (empty($attachments)) {
-            $in .= $this->createBody();
-        } else {
-            $in .= $this->createBodyWithAttachment();
-        }
-        $in .= $this->CRLF . $this->CRLF . "." . $this->CRLF;
-
+        $in = $this->message->toString();
         $code = $this->pushStack($in);
         if ($code !== '250'){
             throw new CodeException('250', $code, array_pop($this->resultStack));
         }
         return $this;
-    }
-
-    /**
-     * @brief createBody create body
-     *
-     * @return string
-     */
-    protected function createBody(){
-        $in = "";
-        $in .= "Content-Type: multipart/alternative; boundary=\"$this->boundaryAlternative\"" . $this->CRLF;
-        $in .= $this->CRLF;
-        $in .= "--" . $this->boundaryAlternative . $this->CRLF;
-        $in .= "Content-Type: text/plain; charset=\"" . $this->charset . "\"" . $this->CRLF;
-        $in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
-        $in .= $this->CRLF;
-        $in .= $this->mailMessage->getBody() . $this->CRLF;
-        $in .= $this->CRLF;
-        $in .= "--" . $this->boundaryAlternative . $this->CRLF;
-        $in .= "Content-Type: text/html; charset=\"" . $this->charset ."\"" . $this->CRLF;
-        $in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
-        $in .= $this->CRLF;
-        $in .= $this->mailMessage->getBody() . $this->CRLF;
-        $in .= $this->CRLF;
-        $in .= "--" . $this->boundaryAlternative . "--" . $this->CRLF;
-        return $in;
-    }
-
-    /**
-     * @brief createBodyWithAttachment create body with attachment
-     *
-     * @return string
-     */
-    protected function createBodyWithAttachment(){
-        $attachments = $this->mailMessage->getAttachment();
-        $in = "";
-        $in .= $this->CRLF;
-        $in .= $this->CRLF;
-        $in .= '--' . $this->boundaryMixed . $this->CRLF;
-        $in .= "Content-Type: multipart/alternative; boundary=\"$this->boundaryAlternative\"" . $this->CRLF;
-        $in .= $this->CRLF;
-        $in .= "--" . $this->boundaryAlternative . $this->CRLF;
-        $in .= "Content-Type: text/plain; charset=\"" . $this->charset . "\"" . $this->CRLF;
-        $in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
-        $in .= $this->CRLF;
-        $in .= $this->mailMessage->getBody() . $this->CRLF;
-        $in .= $this->CRLF;
-        $in .= "--" . $this->boundaryAlternative . $this->CRLF;
-        $in .= "Content-Type: text/html; charset=\"" . $this->charset ."\"" . $this->CRLF;
-        $in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
-        $in .= $this->CRLF;
-        $in .= $this->mailMessage->getBody() . $this->CRLF;
-        $in .= $this->CRLF;
-        $in .= "--" . $this->boundaryAlternative . "--" . $this->CRLF;
-        foreach ($attachments as $name => $path){
-            $in .= $this->CRLF;
-            $in .= '--' . $this->boundaryMixed . $this->CRLF;
-            $in .= "Content-Type: application/octet-stream; name=\"". $name ."\"" . $this->CRLF;
-            $in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
-            $in .= "Content-Disposition: attachment; filename=\"" . $name . "\"" . $this->CRLF;
-            $in .= $this->CRLF;
-            $in .= chunk_split(base64_encode(file_get_contents($path))) . $this->CRLF;
-        }
-        $in .= $this->CRLF;
-        $in .= $this->CRLF;
-        $in .= '--' . $this->boundaryMixed . '--' . $this->CRLF;
-        return $in;
     }
 
     /**
@@ -415,39 +307,6 @@ class SMTP
         if ($code !== '221'){
             throw new CodeException('221', $code, array_pop($this->resultStack));
         }
-        return $this;
-    }
-
-    /**
-     * Create mail header
-     * @return $this
-     */
-    protected function createHeader(){
-        $this->header['Date'] = date('r');
-
-        if(!$this->mailMessage->hasFakeFrom()){
-            $this->header['Return-Path'] = $this->mailMessage->getFakeFromEmail();
-            $this->header['From'] = $this->mailMessage->getFakeFromName() . " <" . $this->mailMessage->getFakeFromEmail() . ">";
-        } else{
-            $this->header['Return-Path'] = $this->mailMessage->getFromEmail();
-            $this->header['From'] = $this->mailMessage->getFromName() . " <" . $this->mailMessage->getFromEmail() .">";
-        }
-
-        $this->header['To'] = '';
-        foreach ($this->mailMessage->getTo() as $toName => $toEmail) {
-            $this->header['To'] .= $toName . " <" . $toEmail . ">, ";
-        }
-        $this->header['To'] = substr($this->header['To'], 0, -2);
-        $this->header['Subject'] = $this->mailMessage->getSubject();
-        $this->header['Message-ID'] = '<' . md5('TX'.md5(time()).uniqid()) . '@' . $this->username . '>';
-        $this->header['X-Priority'] = '3';
-        $this->header['X-Mailer'] = 'Mailer (https://github.com/txthinking/Mailer)';
-        $this->header['MIME-Version'] = '1.0';
-        if (!empty($this->attachment)){
-            $this->boundaryMixed = md5(md5(time().'TxMailer').uniqid());
-            $this->header['Content-Type'] = "multipart/mixed; \r\n\tboundary=\"" . $this->boundaryMixed . "\"";
-        }
-        $this->boundaryAlternative = md5(md5(time().'TXMailer').uniqid());
         return $this;
     }
 
