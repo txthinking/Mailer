@@ -23,10 +23,11 @@ class MailerTest extends TestCase {
 
         $this->message
             ->setFrom('Tom', 'bot@ym.txthinking.com') // your name, your email
-            ->setFakeFrom('heelo', 'bot@baidu.com') // a fake name, a fake email
-            ->setTo('神', 'cloud@txthinking.com')
+            ->setFakeFrom('heelo', 'bot@hello.com') // a fake name, a fake email
+            ->addTo('Cloud', 'cloud@txthinking.com')
             ->setSubject('Test SMTP ' . time())
-            ->setBody('<h1>for test</h1>');
+            ->setBody('<h1>for test</h1>')
+            ->addAttachment('host', '/etc/hosts');
 
         $status = $this->smtp->send($this->message);
         $this->assertTrue($status);
@@ -36,10 +37,12 @@ class MailerTest extends TestCase {
         $status = (new Mailer(new Logger('Mailer')))
             ->setServer('smtp.ym.163.com', 25)
             ->setAuth('bot@ym.txthinking.com', '') // email, password
-            ->setFrom('哈哈啊', 'bot@ym.txthinking.com') //your name, your email
-            ->setTo('Cloud', 'cloud@txthinking.com')
-            ->setSubject('Test Mailer '. time())
-            ->setBody('Hi, I <strong>love</strong> you.')
+            ->setFrom('Tom', 'bot@ym.txthinking.com') // your name, your email
+            ->setFakeFrom('张全蛋', 'zhangquandan@hello.com') // a fake name, a fake email
+            ->addTo('Cloud', 'cloud@txthinking.com')
+            ->setSubject('hello '. time())
+            ->setBody('Hi, boy')
+            ->addAttachment('host', '/etc/hosts')
             ->send();
         $this->assertTrue($status);
     }

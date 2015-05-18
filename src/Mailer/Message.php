@@ -159,6 +159,17 @@ class Message
      * @param $path
      * @return $this
      */
+    public function setAttachment($name, $path){
+        $this->attachment[$name] = $path;
+        return $this;
+    }
+
+    /**
+     * add mail attachment
+     * @param $name
+     * @param $path
+     * @return $this
+     */
     public function addAttachment($name, $path){
         $this->attachment[$name] = $path;
         return $this;
