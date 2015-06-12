@@ -54,6 +54,11 @@ class Message
     protected $body;
 
     /**
+     * mail body
+     */
+    protected $txtBody;
+
+    /**
      *mail attachment
      */
     protected $attachment = array();
@@ -154,6 +159,16 @@ class Message
     }
 
     /**
+     * set mail text body
+     * @param string $body
+     * @return $this
+     */
+    public function setTextBody($txtbody){
+        $this->txtbody = $txtbody;
+        return $this;
+    }
+
+    /**
      * add mail attachment
      * @param $name
      * @param $path
@@ -233,6 +248,14 @@ class Message
     }
 
     /**
+     * @return mixed
+     */
+    public function getTextBody()
+    {
+        return $this->txtBody ?: $this->getBody();
+    }
+
+    /**
      * @return array
      */
     public function getAttachment()
@@ -286,13 +309,13 @@ class Message
         $in .= "Content-Type: text/plain; charset=\"" . $this->charset . "\"" . $this->CRLF;
         $in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
         $in .= $this->CRLF;
-        $in .= chunk_split(base64_encode($this->body)) . $this->CRLF;
+        $in .= chunk_split(base64_encode($this->getTextBody())) . $this->CRLF;
         $in .= $this->CRLF;
         $in .= "--" . $this->boundaryAlternative . $this->CRLF;
         $in .= "Content-Type: text/html; charset=\"" . $this->charset ."\"" . $this->CRLF;
         $in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
         $in .= $this->CRLF;
-        $in .= chunk_split(base64_encode($this->body)) . $this->CRLF;
+        $in .= chunk_split(base64_encode($this->getBody())) . $this->CRLF;
         $in .= $this->CRLF;
         $in .= "--" . $this->boundaryAlternative . "--" . $this->CRLF;
         return $in;
@@ -314,13 +337,13 @@ class Message
         $in .= "Content-Type: text/plain; charset=\"" . $this->charset . "\"" . $this->CRLF;
         $in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
         $in .= $this->CRLF;
-        $in .= chunk_split(base64_encode($this->body)) . $this->CRLF;
+        $in .= chunk_split(base64_encode($this->getTextBody())) . $this->CRLF;
         $in .= $this->CRLF;
         $in .= "--" . $this->boundaryAlternative . $this->CRLF;
         $in .= "Content-Type: text/html; charset=\"" . $this->charset ."\"" . $this->CRLF;
         $in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
         $in .= $this->CRLF;
-        $in .= chunk_split(base64_encode($this->body)) . $this->CRLF;
+        $in .= chunk_split(base64_encode($this->getBody())) . $this->CRLF;
         $in .= $this->CRLF;
         $in .= "--" . $this->boundaryAlternative . "--" . $this->CRLF;
         foreach ($this->attachment as $name => $path){
