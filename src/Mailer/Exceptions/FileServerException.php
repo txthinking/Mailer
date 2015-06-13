@@ -6,15 +6,14 @@
  * and open the template in the editor.
  */
 
-namespace Tx\Mailer\Servers;
-
-use Tx\Mailer\Message;
+namespace Tx\Mailer\Exceptions;
 
 /**
+ * Description of FileServerException
  *
  * @author Sonia
  */
-interface ServerInterface
+class FileServerException extends \Exception
 {
-    public function send(Message $message);
+    //put your code here
 }
