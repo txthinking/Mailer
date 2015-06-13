@@ -17,12 +17,12 @@
  *
  \***************************************************/
 
-namespace Tx\Mailer\Servers;
+namespace Laasti\Mailer\Servers;
 
-use Tx\Mailer\Exceptions\CodeException;
-use Tx\Mailer\Exceptions\CryptoException;
-use Tx\Mailer\Exceptions\SMTPException;
-use Tx\Mailer\Message;
+use Laasti\Mailer\Exceptions\CodeException;
+use Laasti\Mailer\Exceptions\CryptoException;
+use Laasti\Mailer\Exceptions\SMTPException;
+use Laasti\Mailer\Message;
 use Psr\Log\LoggerInterface;
 
 class SMTP implements ServerInterface

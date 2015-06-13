@@ -6,7 +6,7 @@
  * and open the template in the editor.
  */
 
-namespace Tx\Mailer\Exceptions;
+namespace Laasti\Mailer\Exceptions;
 
 /**
  * Description of FileServerException

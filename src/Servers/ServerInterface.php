@@ -6,9 +6,9 @@
  * and open the template in the editor.
  */
 
-namespace Tx\Mailer\Servers;
+namespace Laasti\Mailer\Servers;
 
-use Tx\Mailer\Message;
+use Laasti\Mailer\Message;
 
 /**
  *

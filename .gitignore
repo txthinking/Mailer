@@ -3,3 +3,4 @@ composer.lock
 .idea/
 docs/
 /nbproject/
+/tests/maillogs/

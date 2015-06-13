@@ -6,9 +6,9 @@
  * and open the template in the editor.
  */
 
-namespace Tx\Mailer\Servers;
+namespace Laasti\Mailer\Servers;
 
-use Tx\Mailer\Message;
+use Laasti\Mailer\Message;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -30,7 +30,7 @@ class FileServer implements ServerInterface
     public function send(Message $message) {
 
         if (!is_writable($this->filepath)) {
-            throw new \Tx\Mailer\Exceptions\FileServerException('The message destination directory is not writeable: '.$this->filepath);
+            throw new \Laasti\Mailer\Exceptions\FileServerException('The message destination directory is not writeable: '.$this->filepath);
         }
         $in = $message->toString();
         $data = $message->headersToString().$message->CRLF;
@@ -43,7 +43,7 @@ class FileServer implements ServerInterface
         $file = addslashes($this->filepath.'/'.date('Y-m-d H-i-s').'-'.md5($in).'.txt');
 
         if (!file_put_contents($file, $data)) {
-            throw new \Tx\Mailer\Exceptions\FileServerException('Could not write message file to disk: '.$file);
+            throw new \Laasti\Mailer\Exceptions\FileServerException('Could not write message file to disk: '.$file);
         }
 
         $this->logger && $this->logger->addDebug('Mail saved: '. $file);

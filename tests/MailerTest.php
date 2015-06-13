@@ -1,14 +1,14 @@
 <?php
 
-use \Tx\Mailer;
-use \Tx\Mailer\Servers\SMTP;
-use \Tx\Mailer\Servers\Mail;
-use \Tx\Mailer\Servers\Sendmail;
-use \Tx\Mailer\Servers\NullServer;
-use \Tx\Mailer\Servers\FileServer;
-use \Tx\Mailer\Message;
-use \Tx\Mailer\Exceptions\SMTPException;
-use \Monolog\Logger;
+use Laasti\Mailer\Mailer;
+use Laasti\Mailer\Servers\SMTP;
+use Laasti\Mailer\Servers\Mail;
+use Laasti\Mailer\Servers\Sendmail;
+use Laasti\Mailer\Servers\NullServer;
+use Laasti\Mailer\Servers\FileServer;
+use Laasti\Mailer\Message;
+use Laasti\Mailer\Exceptions\SMTPException;
+use Monolog\Logger;
 
 class MailerTest extends TestCase {
 

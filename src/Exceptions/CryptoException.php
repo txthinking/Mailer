@@ -20,16 +20,13 @@
  * Created by PhpStorm.
  * User: msowers
  * Date: 3/30/15
- * Time: 1:51 PM
+ * Time: 2:48 PM
  */
 
-namespace Tx\Mailer\Exceptions;
+namespace Laasti\Mailer\Exceptions;
 
-class SMTPException extends \Exception
+
+class CryptoException extends SMTPException
 {
-    public function __construct($message)
-    {
-        parent::__construct($message);
-    }
 
 }

@@ -6,11 +6,11 @@
  * and open the template in the editor.
  */
 
-namespace Tx\Mailer\Servers;
+namespace Laasti\Mailer\Servers;
 
 use Psr\Log\LoggerInterface;
-use Tx\Mailer\Exceptions\SendException;
-use Tx\Mailer\Message;
+use Laasti\Mailer\Exceptions\SendException;
+use Laasti\Mailer\Message;
 
 /**
  * Description of Mail

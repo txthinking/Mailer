@@ -1,6 +1,6 @@
 <?php
 
-namespace Tx\Mailer;
+namespace Laasti\Mailer;
 
 /* * *************************************************\
  *

@@ -6,8 +6,8 @@
  * Time: 10:57 AM
  */
 
-use Tx\Mailer\Servers\SMTP;
-use Tx\Mailer\Message;
+use Laasti\Mailer\Servers\SMTP;
+use Laasti\Mailer\Message;
 use ERB\Testing\Tools\TestHelper;
 
 /**
@@ -70,7 +70,7 @@ class SMTPTest extends TestCase {
 */
 
     /**
-     * @expectedException \Tx\Mailer\Exceptions\SMTPException
+     * @expectedException \Laasti\Mailer\Exceptions\SMTPException
      */
     public function testConnectSMTPException()
     {

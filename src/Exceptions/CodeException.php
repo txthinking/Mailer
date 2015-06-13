@@ -20,13 +20,21 @@
  * Created by PhpStorm.
  * User: msowers
  * Date: 3/30/15
- * Time: 2:48 PM
+ * Time: 2:42 PM
  */
 
-namespace Tx\Mailer\Exceptions;
+namespace Laasti\Mailer\Exceptions;
 
 
-class CryptoException extends SMTPException
+class CodeException extends SMTPException
 {
+    public function __construct($expected, $received, $serverMessage = null)
+    {
+        $message = "Unexpected return code - Expected: {$expected}, Got: {$received}";
+        if (isset($serverMessage)) {
+            $message .= " | " . $serverMessage;
+        }
+        parent::__construct($message);
+    }
 
 }
