@@ -9,7 +9,7 @@
 namespace Tx\Mailer\Servers;
 
 use Tx\Mailer\Message;
-use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 
 /**
  * Description of Null
@@ -21,7 +21,7 @@ class FileServer implements ServerInterface
     protected $logger;
     protected $filepath;
 
-    public function __construct($filepath, Logger $logger = null)
+    public function __construct($filepath, LoggerInterface $logger = null)
     {
         $this->filepath = $filepath;
         $this->logger = $logger;

@@ -8,7 +8,7 @@
 
 namespace Tx\Mailer\Servers;
 
-use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 use Tx\Mailer\Exceptions\SendException;
 use Tx\Mailer\Message;
 
@@ -21,16 +21,13 @@ class Mail implements ServerInterface
 {
     protected $logger;
 
-    public function __construct(Logger $logger = null)
+    public function __construct(LoggerInterface $logger = null)
     {
         $this->logger = $logger;
     }
 
     public function send(Message $message) {
         $in = $message->toString();
-        var_dump($in);
-        var_dump($message->getHeader('To'));
-        die;
         
         // most documentation of sendmail using the "-f" flag lacks a space after it, however
 	// we've encountered servers that seem to require it to be in place.

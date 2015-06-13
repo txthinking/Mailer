@@ -1,33 +1,29 @@
 {
-    "name": "txthinking/mailer",
+    "name": "laasti/mailer",
     "type": "library",
-    "keywords": ["mail", "smtp"],
-    "description": "A very lightweight PHP SMTP mail sender",
+    "keywords": ["mail", "smtp", "sendmail", "email", "mailer"],
+    "description": "A very lightweight PHP email sender",
     "license": "MIT",
-    "homepage": "http://github.com/txthinking/Mailer",
+    "homepage": "http://github.com/laasti/Mailer",
     "authors": [
       {
-        "name": "Cloud",
-        "email": "cloud@txthinking.com",
-        "homepage": "http://www.txthinking.com",
-        "role": "Thinker"
-      },
-      {
-        "name": "Matt Sowers",
-        "email": "msowers@erblearn.org"
+        "name": "Sonia Marquette",
+        "email": "contact@nebulousweb.com",
+        "homepage": "http://www.nebulousweb.com"
       }
     ],
     "require": {
         "php": ">=5.3.2",
-        "monolog/monolog": "~1.13"
+        "psr/log": "~1.0"
     },
     "require-dev": {
+        "monolog/monolog": "~1.13",
         "phpunit/phpunit": "~4.0",
         "erb/testing-tools": "dev-master"
     },
     "autoload": {
         "psr-4": {
-            "Tx\\": "src/"
+            "Laasti\\": "src/"
         }
     },
     "autoload-dev": {

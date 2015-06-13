@@ -8,7 +8,7 @@
 
 namespace Tx\Mailer\Servers;
 
-use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 use Tx\Mailer\Exceptions\SendException;
 use Tx\Mailer\Message;
 
@@ -22,7 +22,7 @@ class Sendmail implements ServerInterface
     protected $logger;
     protected $mailpath;
 
-    public function __construct(Logger $logger = null, $mailpath = '/usr/sbin/sendmail')
+    public function __construct(LoggerInterface $logger = null, $mailpath = '/usr/sbin/sendmail')
     {
         $this->logger = $logger;
         $this->mailpath = $mailpath;

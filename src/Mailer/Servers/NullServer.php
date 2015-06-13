@@ -9,7 +9,7 @@
 namespace Tx\Mailer\Servers;
 
 use Tx\Mailer\Message;
-use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 
 /**
  * Description of Null
@@ -20,7 +20,7 @@ class NullServer implements ServerInterface
 {
     protected $logger;
 
-    public function __construct(Logger $logger = null)
+    public function __construct(LoggerInterface $logger = null)
     {
         $this->logger = $logger;
     }

@@ -23,7 +23,7 @@ use Tx\Mailer\Exceptions\CodeException;
 use Tx\Mailer\Exceptions\CryptoException;
 use Tx\Mailer\Exceptions\SMTPException;
 use Tx\Mailer\Message;
-use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 
 class SMTP implements ServerInterface
 {
@@ -85,7 +85,7 @@ class SMTP implements ServerInterface
      */
     protected $resultStack = array();
 
-    public function __construct(Logger $logger = null, $host = null, $username = null, $password = null, $port = 25, $secure = null)
+    public function __construct(LoggerInterface $logger = null, $host = null, $username = null, $password = null, $port = 25, $secure = null)
     {
         $this->host = $host;
         $this->username = $username;
