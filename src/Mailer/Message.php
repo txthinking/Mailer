@@ -39,6 +39,16 @@ class Message
     protected $fakeFromEmail;
 
     /**
+     * reply to name
+     */
+    protected $replyToName;
+
+    /**
+     * reply to email
+     */
+    protected $replyToEmail;
+
+    /**
      * to email
      */
     protected $to = array();
@@ -56,7 +66,7 @@ class Message
     /**
      * mail body
      */
-    protected $txtBody;
+    protected $textBody;
 
     /**
      *mail attachment
@@ -99,6 +109,19 @@ class Message
     {
         $this->fromName = $name;
         $this->fromEmail = $email;
+        return $this;
+    }
+
+    /**
+     * set mail reply to
+     * @param string $name
+     * @param string $email
+     * @return $this
+     */
+    public function setReplyTo($name, $email)
+    {
+        $this->replyToName = $name;
+        $this->replyToEmail = $email;
         return $this;
     }
 
@@ -190,6 +213,17 @@ class Message
         return $this;
     }
 
+
+    /**
+     * set mail charset
+     * @param string $charset
+     * @return $this
+     */
+    public function setCharset($charset){
+        $this->charset = $charset;
+        return $this;
+    }
+
     /**
      * @return string
      */
@@ -224,6 +258,22 @@ class Message
     }
 
     /**
+     * @return string
+     */
+    public function getReplyToName()
+    {
+        return $this->replyToName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReplyToEmail()
+    {
+        return $this->replyToEmail;
+    }
+
+    /**
      * @return mixed
      */
     public function getTo()
@@ -252,7 +302,29 @@ class Message
      */
     public function getTextBody()
     {
-        return $this->txtBody ?: $this->getBody();
+        return $this->textBody;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAltBody()
+    {
+        if (!empty($this->textBody)) {
+            return $this->textBody;
+        }
+
+        //Create text body from HTML body
+        $match = [];
+        $body = preg_match('/\<body.*?\>(.*)\<\/body\>/si', $this->body, $match) ? $match[1] : $this->body;
+        $body = str_replace("\t", '', preg_replace('#<!--(.*)--\>#', '', trim(strip_tags($body))));
+        for ($i = 20; $i >= 3; $i--)
+        {
+                $body = str_replace(str_repeat("\n", $i), "\n\n", $body);
+        }
+        // Reduce multiple spaces
+        $body = preg_replace('| +|', ' ', $body);
+        return $body;
     }
 
     /**
@@ -273,10 +345,16 @@ class Message
         if(!empty($this->fakeFromEmail)){
             $this->header['Return-Path'] = $this->fakeFromEmail;
             $this->header['From'] = $this->fakeFromName . " <" . $this->fakeFromEmail . ">";
+            $this->header['Reply-To'] = $this->fakeFromName . " <" . $this->fakeFromEmail .">";
         } else{
             $this->header['Return-Path'] = $this->fromEmail;
             $this->header['From'] = $this->fromName . " <" . $this->fromEmail .">";
+            $this->header['Reply-To'] = $this->fromName . " <" . $this->fromEmail .">";
         }
+        
+        if (!is_null($this->replyToName)) {
+            $this->header['Reply-To'] = $this->replyToName . " <" . $this->replyToEmail .">";
+        } 
 
         $this->header['To'] = '';
         foreach ($this->to as $toName => $toEmail) {
@@ -303,13 +381,13 @@ class Message
      */
     protected function createBody(){
         $in = "";
-        $in .= "Content-Type: multipart/alternative; boundary=\"$this->boundaryAlternative\"" . $this->CRLF;
+        $in .= "Content-Type: multipart/alternative; boundary=\"$this->boundaryAlternative\"" . $this->CRLF; //MAIL: In header, not body
         $in .= $this->CRLF;
         $in .= "--" . $this->boundaryAlternative . $this->CRLF;
         $in .= "Content-Type: text/plain; charset=\"" . $this->charset . "\"" . $this->CRLF;
         $in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
         $in .= $this->CRLF;
-        $in .= chunk_split(base64_encode($this->getTextBody())) . $this->CRLF;
+        $in .= chunk_split(base64_encode($this->getAltBody())) . $this->CRLF;
         $in .= $this->CRLF;
         $in .= "--" . $this->boundaryAlternative . $this->CRLF;
         $in .= "Content-Type: text/html; charset=\"" . $this->charset ."\"" . $this->CRLF;
@@ -322,12 +400,59 @@ class Message
     }
 
     /**
+     * @brief createTextBody create text body
+     *
+     * @return string
+     */
+    protected function createTextBody(){
+        $in = "";
+        $in .= "Content-Type: text/plain; charset=\"" . $this->charset . "\"" . $this->CRLF; //Mail, in header, not body
+        $in .= "Content-Transfer-Encoding: base64" . $this->CRLF; //Mail, in header, not body
+        $in .= $this->CRLF;
+        $in .= chunk_split(base64_encode($this->getTextBody())) . $this->CRLF;
+        return $in;
+    }
+
+    /**
+     * @brief createTextBodyWithAttachment create text body with attachment
+     *
+     * @return string
+     */
+    protected function createTextBodyWithAttachment(){
+        $in = "";
+        //Mixed could be related for image attachment in Thunderbird
+        $in .= 'Content-Type: multipart/mixed; boundary="'.$this->boundaryMixed.'"'; //Mail, in header, not body
+        $in .= $this->CRLF;
+        $in .= $this->CRLF;
+        $in .= '--' . $this->boundaryMixed . $this->CRLF;
+        $in .= "Content-Type: text/plain; charset=\"" . $this->charset . "\"" . $this->CRLF;
+        $in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
+        $in .= $this->CRLF;
+        $in .= chunk_split(base64_encode($this->getTextBody())) . $this->CRLF;
+        $in .= $this->CRLF;
+        foreach ($this->attachment as $name => $path){
+            $in .= $this->CRLF;
+            $in .= '--' . $this->boundaryMixed . $this->CRLF;
+            $in .= "Content-Type: application/octet-stream; name=\"". $name ."\"" . $this->CRLF;
+            $in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
+            $in .= "Content-Disposition: attachment; filename=\"" . $name . "\"" . $this->CRLF;
+            $in .= $this->CRLF;
+            $in .= chunk_split(base64_encode(file_get_contents($path))) . $this->CRLF;
+        }
+        $in .= $this->CRLF;
+        $in .= $this->CRLF;
+        $in .= '--' . $this->boundaryMixed . '--' . $this->CRLF;
+        return $in;
+    }
+
+    /**
      * @brief createBodyWithAttachment create body with attachment
      *
      * @return string
      */
     protected function createBodyWithAttachment(){
         $in = "";
+        $in .= 'Content-Type: multipart/mixed; boundary="'.$this->boundaryMixed.'"'; //Mail, in header, not body
         $in .= $this->CRLF;
         $in .= $this->CRLF;
         $in .= '--' . $this->boundaryMixed . $this->CRLF;
@@ -337,7 +462,7 @@ class Message
         $in .= "Content-Type: text/plain; charset=\"" . $this->charset . "\"" . $this->CRLF;
         $in .= "Content-Transfer-Encoding: base64" . $this->CRLF;
         $in .= $this->CRLF;
-        $in .= chunk_split(base64_encode($this->getTextBody())) . $this->CRLF;
+        $in .= chunk_split(base64_encode($this->getAltBody())) . $this->CRLF;
         $in .= $this->CRLF;
         $in .= "--" . $this->boundaryAlternative . $this->CRLF;
         $in .= "Content-Type: text/html; charset=\"" . $this->charset ."\"" . $this->CRLF;
