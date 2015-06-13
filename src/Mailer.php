@@ -72,6 +72,18 @@ class Mailer{
     }
 
     /**
+     * set mail reply to
+     * @param string $name
+     * @param string $email
+     * @return $this
+     */
+    public function setReplyTo($name, $email)
+    {
+        $this->message->setReplyTo($name, $email);
+        return $this;
+    }
+
+    /**
      * set mail receiver
      * @param string $name
      * @param string $email
@@ -100,6 +112,17 @@ class Mailer{
      */
     public function setSubject($subject){
         $this->message->setSubject($subject);
+        return $this;
+    }
+
+    /**
+     * set mail text body
+     * @param string $txtbody
+     * @return $this
+     */
+    public function setTextBody($txtbody)
+    {
+        $this->message->setTextBody($txtbody);
         return $this;
     }
 
@@ -136,13 +159,23 @@ class Mailer{
         $this->message->addAttachment($name, $path);
         return $this;
     }
+    /**
+     * set mail charset
+     * @param string $charset
+     * @return $this
+     */
+    public function setCharset($charset)
+    {
+        $this->message->setCharset($charset);
+        return $this;
+    }
 
     /**
      *  Send the message...
      * @return boolean
      */
-    public function send(){
-        return $this->server->send($this->message);
+    public function send($message = null){
+        return $this->server->send($message ?: $this->message);
     }
 
 }
