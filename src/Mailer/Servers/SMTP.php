@@ -17,14 +17,14 @@
  *
  \***************************************************/
 
-namespace Tx\Mailer;
+namespace Tx\Mailer\Servers;
 
 use Tx\Mailer\Exceptions\CodeException;
 use Tx\Mailer\Exceptions\CryptoException;
 use Tx\Mailer\Exceptions\SMTPException;
 use Monolog\Logger;
 
-class SMTP
+class SMTP implements ServerInterface
 {
     /**
      * smtp socket
@@ -84,8 +84,13 @@ class SMTP
      */
     protected $resultStack = array();
 
-    public function __construct(Logger $logger=null)
+    public function __construct($host, $username, $password, $port = 25, $secure = null, Logger $logger = null)
     {
+        $this->host = $host;
+        $this->username = $username;
+        $this->password = $password;
+        $this->port = $port;
+        $this->secure = $secure;
         $this->logger = $logger;
     }
 

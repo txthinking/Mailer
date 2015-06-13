@@ -17,9 +17,8 @@
  *
  \***************************************************/
 
-use \Tx\Mailer\Message;
-use \Tx\Mailer\SMTP;
-use \Monolog\Logger;
+use Tx\Mailer\Message;
+use Tx\Mailer\Servers\ServerInterface;
 
 /**
  * Class Mailer
@@ -31,10 +30,10 @@ use \Monolog\Logger;
  */
 class Mailer{
     /**
-     * SMTP Class
-     * @var SMTP
+     * Server Class
+     * @var ServerInterface
      */
-    protected $smtp;
+    protected $server;
 
     /**
      * Mail Message
@@ -45,34 +44,11 @@ class Mailer{
     /**
      * construct function
      */
-    public function __construct(Logger $logger=null){
-        $this->smtp = new SMTP($logger);
+    public function __construct(ServerInterface $server=null){
+        $this->server = $server;
         $this->message = new Message();
     }
-
-    /**
-     * set server and port
-     * @param string $host server
-     * @param int $port port
-     * @param string $secure ssl tls
-     * @return $this
-     */
-    public function setServer($host, $port, $secure=null){
-        $this->smtp->setServer($host, $port, $secure);
-        return $this;
-    }
-
-    /**
-     * auth with server
-     * @param string $username
-     * @param string $password
-     * @return $this
-     */
-    public function setAuth($username, $password){
-        $this->smtp->setAuth($username, $password);
-        return $this;
-    }
-
+    
     /**
      * set mail from
      * @param string $name
@@ -166,7 +142,7 @@ class Mailer{
      * @return boolean
      */
     public function send(){
-        return $this->smtp->send($this->message);
+        return $this->server->send($this->message);
     }
 
 }
