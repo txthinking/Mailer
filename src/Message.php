@@ -384,6 +384,7 @@ class Message
         $this->header['X-Priority'] = '3';
         $this->header['X-Mailer'] = 'Mailer (https://github.com/txthinking/Mailer)';
         $this->header['MIME-Version'] = '1.0';
+        $this->boundaryAlternative = md5(md5(time() . 'TXMailer') . uniqid());
         if (!empty($this->attachment)) {
             $this->boundaryMixed = md5(md5(time() . 'TxMailer') . uniqid());
             $this->header['Content-Type'] = "multipart/mixed; charset=\"" . $this->charset . "\" \r\n\tboundary=\"" . $this->boundaryMixed . "\"";
@@ -392,7 +393,6 @@ class Message
         } else {
             $this->header['Content-Type'] = "multipart/alternative; charset=\"" . $this->charset . "\"; boundary=\"$this->boundaryAlternative\"";
         }
-        $this->boundaryAlternative = md5(md5(time() . 'TXMailer') . uniqid());
         return $this;
     }
 
