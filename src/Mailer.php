@@ -17,9 +17,9 @@
  *
  \***************************************************/
 
+use Psr\Log\LoggerInterface;
 use \Tx\Mailer\Message;
 use \Tx\Mailer\SMTP;
-use \Monolog\Logger;
 
 /**
  * Class Mailer
@@ -45,7 +45,7 @@ class Mailer{
     /**
      * construct function
      */
-    public function __construct(Logger $logger=null){
+    public function __construct(LoggerInterface $logger=null){
         $this->smtp = new SMTP($logger);
         $this->message = new Message();
     }
