@@ -19,10 +19,10 @@
 
 namespace Tx\Mailer;
 
+use Psr\Log\LoggerInterface;
 use Tx\Mailer\Exceptions\CodeException;
 use Tx\Mailer\Exceptions\CryptoException;
 use Tx\Mailer\Exceptions\SMTPException;
-use Monolog\Logger;
 
 class SMTP
 {
@@ -73,7 +73,7 @@ class SMTP
     protected $message;
 
     /**
-     * @var Logger - Used to make things prettier than self::$logger
+     * @var LoggerInterface - Used to make things prettier than self::$logger
      */
     protected $logger;
 
@@ -89,7 +89,7 @@ class SMTP
      */
     protected $resultStack = array();
 
-    public function __construct(Logger $logger=null)
+    public function __construct(LoggerInterface $logger=null)
     {
         $this->logger = $logger;
     }
@@ -107,7 +107,7 @@ class SMTP
         $this->port = $port;
         $this->secure = $secure;
         if(!$this->ehlo) $this->ehlo = $host;
-        $this->logger && $this->logger->addDebug("Set: the server");
+        $this->logger && $this->logger->debug("Set: the server");
         return $this;
     }
 
@@ -120,7 +120,7 @@ class SMTP
     public function setAuth($username, $password){
         $this->username = $username;
         $this->password = $password;
-        $this->logger && $this->logger->addDebug("Set: the auth");
+        $this->logger && $this->logger->debug("Set: the auth");
         return $this;
     }
 
@@ -144,7 +144,7 @@ class SMTP
      * @throws SMTPException
      */
     public function send(Message $message){
-        $this->logger && $this->logger->addDebug('Set: a message will be sent');
+        $this->logger && $this->logger->debug('Set: a message will be sent');
         $this->message = $message;
         $this->connect()
             ->ehlo();
@@ -169,7 +169,7 @@ class SMTP
      * @throws SMTPException
      */
     protected function connect(){
-        $this->logger && $this->logger->addDebug("Connecting to {$this->host} at {$this->port}");
+        $this->logger && $this->logger->debug("Connecting to {$this->host} at {$this->port}");
         $host = ($this->secure == 'ssl') ? 'ssl://' . $this->host : $this->host;
         $this->smtp = @fsockopen($host, $this->port);
         //set block mode
@@ -330,7 +330,7 @@ class SMTP
     {
         $this->commandStack[] = $string;
         fputs($this->smtp, $string, strlen($string));
-        $this->logger && $this->logger->addDebug('Sent: '. $string);
+        $this->logger && $this->logger->debug('Sent: '. $string);
         return $this->getCode();
     }
 
@@ -342,7 +342,7 @@ class SMTP
      */
     protected function getCode() {
         while ($str = fgets($this->smtp, 515)) {
-            $this->logger && $this->logger->addDebug("Got: ". $str);
+            $this->logger && $this->logger->debug("Got: ". $str);
             $this->resultStack[] = $str;
             if(substr($str,3,1) == " ") {
                 $code = substr($str,0,3);
