@@ -193,7 +193,8 @@ class SMTP
      * @throws SMTPException
      */
     protected function starttls(){
-        $code = $this->pushStack("STARTTLS");
+        $in = "STARTTLS" . $this->CRLF;
+        $code = $this->pushStack($in);
         if ($code !== '220'){
             throw new CodeException('220', $code, array_pop($this->resultStack));
         }
