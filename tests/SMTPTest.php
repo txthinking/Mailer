@@ -38,7 +38,7 @@ class SMTPTest extends TestCase {
 
     public function testSetServer()
     {
-        $result = $this->smtp->setServer("localhost", "25", null);
+        $result = $this->smtp->setServer('localhost', '25', null);
         $this->assertEquals('localhost', $this->testHelper->getPropertyValue($this->smtp, 'host'));
         $this->assertEquals('25', $this->testHelper->getPropertyValue($this->smtp, 'port'));
         $this->assertSame($this->smtp, $result);
@@ -55,8 +55,8 @@ class SMTPTest extends TestCase {
 
     public function testMessage()
     {
-        $this->smtp->setServer("localhost", "25", null)
-            ->setAuth('none', 'none');
+        $this->smtp->setServer(self::SERVER, self::PORT, null)
+            ->setAuth(self::USER, self::PASS);
 
         $message = new Message();
         $message->setFrom('You', 'nobody@nowhere.no')
@@ -74,7 +74,7 @@ class SMTPTest extends TestCase {
      */
     public function testConnectSMTPException()
     {
-        $this->smtp->setServer("localhost", "99999", null)
+        $this->smtp->setServer(self::SERVER, "99999", null)
             ->setAuth('none', 'none');
         $message = new Message();
         $message->setFrom('You', 'nobody@nowhere.no')
