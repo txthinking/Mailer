@@ -75,7 +75,7 @@ class SMTPTest extends TestCase {
      */
     public function testConnectSMTPException()
     {
-        $this->smtp->setServer(self::SERVER, "99999", null)
+        $this->smtp->setServer('localhost', "99999", null)
             ->setAuth('none', 'none');
         $message = new Message();
         $message->setFrom('You', 'nobody@nowhere.no')
