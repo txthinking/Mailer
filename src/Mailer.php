@@ -143,7 +143,6 @@ class Mailer{
      * @param $name
      * @param $path
      * @return $this
-     * @internal param string $attachment
      */
     public function setAttachment($name, $path){
         $this->message->addAttachment($name, $path);
@@ -155,7 +154,6 @@ class Mailer{
      * @param $name
      * @param $path
      * @return $this
-     * @internal param string $attachment
      */
     public function addAttachment($name, $path){
         $this->message->addAttachment($name, $path);
