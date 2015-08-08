@@ -8,7 +8,9 @@ use \Monolog\Logger;
 
 class MailerTest extends TestCase {
 
+    /** @var  SMTP */
     protected $smtp;
+    /** @var  Message */
     protected $message;
 
     public function setup(){

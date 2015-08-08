@@ -44,6 +44,7 @@ class Mailer{
 
     /**
      * construct function
+     * @param LoggerInterface $logger
      */
     public function __construct(LoggerInterface $logger=null){
         $this->smtp = new SMTP($logger);
