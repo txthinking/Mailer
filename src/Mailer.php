@@ -44,6 +44,7 @@ class Mailer{
 
     /**
      * construct function
+     * @param LoggerInterface $logger
      */
     public function __construct(LoggerInterface $logger=null){
         $this->smtp = new SMTP($logger);
@@ -142,7 +143,6 @@ class Mailer{
      * @param $name
      * @param $path
      * @return $this
-     * @internal param string $attachment
      */
     public function setAttachment($name, $path){
         $this->message->addAttachment($name, $path);
@@ -154,7 +154,6 @@ class Mailer{
      * @param $name
      * @param $path
      * @return $this
-     * @internal param string $attachment
      */
     public function addAttachment($name, $path){
         $this->message->addAttachment($name, $path);

@@ -138,7 +138,7 @@ class SMTP
      * Send the message
      *
      * @param Message $message
-     * @return $this
+     * @return bool
      * @throws CodeException
      * @throws CryptoException
      * @throws SMTPException
