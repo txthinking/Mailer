@@ -29,7 +29,7 @@ class MailerTest extends TestCase {
             ->addTo('Cloud', 'cloud@txthinking.com')
             ->setSubject('Test SMTP ' . time())
             ->setBody('<h1>for test</h1>')
-            ->addAttachment('host', '/etc/hosts');
+            ->addAttachment('host', __FILE__);
 
         $status = $this->smtp->send($this->message);
         $this->assertTrue($status);
@@ -44,7 +44,7 @@ class MailerTest extends TestCase {
             ->addTo('Cloud', 'cloud@txthinking.com')
             ->setSubject('hello '. time())
             ->setBody('Hi, boy')
-            ->addAttachment('host', '/etc/hosts')
+            ->addAttachment('host', __FILE__)
             ->send();
         $this->assertTrue($status);
     }
