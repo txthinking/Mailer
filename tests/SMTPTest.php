@@ -29,11 +29,19 @@ class SMTPTest extends TestCase {
      */
     protected $testHelper;
 
+    /** @var  Message */
+    protected $message;
+
+
     public function setup()
     {
         $this->smtp = new SMTP();
         $this->testHelper = new TestHelper();
-
+        $this->message = new Message();
+        $this->message->setFrom('You', 'nobody@nowhere.no')
+                ->setTo('Them', 'them@nowhere.no')
+                ->setSubject('This is a test')
+                ->setBody('This is a test part two');
     }
 
     public function testSetServer()
@@ -58,17 +66,20 @@ class SMTPTest extends TestCase {
         $this->smtp->setServer(self::SERVER, self::PORT, null)
             ->setAuth(self::USER, self::PASS);
 
-        $message = new Message();
-        $message->setFrom('You', 'nobody@nowhere.no')
-            ->setTo('Them', 'them@nowhere.no')
-            ->setSubject('This is a test')
-            ->setBody('This is a test part two');
-
-        $status = $this->smtp->send($message);
+        $status = $this->smtp->send($this->message);
         $this->assertTrue($status);
         usleep(self::DELAY);
     }
 
+    public function testTLSMessage()
+    {
+        $this->smtp->setServer(self::SERVER, self::PORT_TLS, 'tls')
+                   ->setAuth(self::USER, self::PASS);
+
+        $status = $this->smtp->send($this->message);
+        $this->assertTrue($status);
+        usleep(self::DELAY);
+    }
 
     /**
      * @expectedException \Tx\Mailer\Exceptions\SMTPException
