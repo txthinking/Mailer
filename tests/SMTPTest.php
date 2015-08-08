@@ -66,6 +66,7 @@ class SMTPTest extends TestCase {
 
         $status = $this->smtp->send($message);
         $this->assertTrue($status);
+        usleep(self::DELAY);
     }
 
 
@@ -83,7 +84,6 @@ class SMTPTest extends TestCase {
             ->setBody('This is a test part two');
 
         $this->smtp->send($message);
-
     }
 
 

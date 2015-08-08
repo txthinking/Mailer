@@ -31,6 +31,7 @@ class MailerTest extends TestCase {
 
         $status = $this->smtp->send($this->message);
         $this->assertTrue($status);
+        usleep(self::DELAY);
     }
 
     public function testSend(){
@@ -45,6 +46,7 @@ class MailerTest extends TestCase {
             ->addAttachment('host', '/etc/hosts')
             ->send();
         $this->assertTrue($status);
+        usleep(self::DELAY);
     }
 
 }
