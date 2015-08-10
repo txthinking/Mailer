@@ -29,16 +29,24 @@ class SMTPTest extends TestCase {
      */
     protected $testHelper;
 
+    /** @var  Message */
+    protected $message;
+
+
     public function setup()
     {
         $this->smtp = new SMTP();
         $this->testHelper = new TestHelper();
-
+        $this->message = new Message();
+        $this->message->setFrom('You', 'nobody@nowhere.no')
+                ->setTo('Them', 'them@nowhere.no')
+                ->setSubject('This is a test')
+                ->setBody('This is a test part two');
     }
 
     public function testSetServer()
     {
-        $result = $this->smtp->setServer("localhost", "25", null);
+        $result = $this->smtp->setServer('localhost', '25', null);
         $this->assertEquals('localhost', $this->testHelper->getPropertyValue($this->smtp, 'host'));
         $this->assertEquals('25', $this->testHelper->getPropertyValue($this->smtp, 'port'));
         $this->assertSame($this->smtp, $result);
@@ -55,26 +63,30 @@ class SMTPTest extends TestCase {
 
     public function testMessage()
     {
-        $this->smtp->setServer("localhost", "25", null)
-            ->setAuth('none', 'none');
+        $this->smtp->setServer(self::SERVER, self::PORT, null)
+            ->setAuth(self::USER, self::PASS);
 
-        $message = new Message();
-        $message->setFrom('You', 'nobody@nowhere.no')
-            ->setTo('Them', 'them@nowhere.no')
-            ->setSubject('This is a test')
-            ->setBody('This is a test part two');
-
-        $status = $this->smtp->send($message);
+        $status = $this->smtp->send($this->message);
         $this->assertTrue($status);
+        usleep(self::DELAY);
     }
 
+    public function testTLSMessage()
+    {
+        $this->smtp->setServer(self::SERVER, self::PORT_TLS, 'tls')
+                   ->setAuth(self::USER, self::PASS);
+
+        $status = $this->smtp->send($this->message);
+        $this->assertTrue($status);
+        usleep(self::DELAY);
+    }
 
     /**
      * @expectedException \Tx\Mailer\Exceptions\SMTPException
      */
     public function testConnectSMTPException()
     {
-        $this->smtp->setServer("localhost", "99999", null)
+        $this->smtp->setServer('localhost', "99999", null)
             ->setAuth('none', 'none');
         $message = new Message();
         $message->setFrom('You', 'nobody@nowhere.no')
@@ -83,7 +95,6 @@ class SMTPTest extends TestCase {
             ->setBody('This is a test part two');
 
         $this->smtp->send($message);
-
     }
 
 

@@ -20,8 +20,8 @@ class MailerTest extends TestCase {
 
     public function testSMTP(){
         $this->smtp
-            ->setServer('smtp.ym.163.com', 25)
-            ->setAuth('bot@ym.txthinking.com', ''); // email, password
+            ->setServer(self::SERVER, self::PORT)
+            ->setAuth(self::USER, self::PASS); // email, password
 
         $this->message
             ->setFrom('Tom', 'bot@ym.txthinking.com') // your name, your email
@@ -33,12 +33,13 @@ class MailerTest extends TestCase {
 
         $status = $this->smtp->send($this->message);
         $this->assertTrue($status);
+        usleep(self::DELAY);
     }
 
     public function testSend(){
         $status = (new Mailer(new Logger('Mailer')))
-            ->setServer('smtp.ym.163.com', 25)
-            ->setAuth('bot@ym.txthinking.com', '') // email, password
+            ->setServer(self::SERVER, self::PORT)
+            ->setAuth(self::USER, self::PASS) // email, password
             ->setFrom('Tom', 'bot@ym.txthinking.com') // your name, your email
             ->setFakeFrom('张全蛋', 'zhangquandan@hello.com') // a fake name, a fake email
             ->addTo('Cloud', 'cloud@txthinking.com')
@@ -47,6 +48,7 @@ class MailerTest extends TestCase {
             ->addAttachment('host', __FILE__)
             ->send();
         $this->assertTrue($status);
+        usleep(self::DELAY);
     }
 
 }
