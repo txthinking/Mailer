@@ -42,6 +42,7 @@ class SMTPTest extends TestCase {
                 ->setTo('Them', 'them@nowhere.no')
                 ->setSubject('This is a test')
                 ->setBody('This is a test part two');
+        usleep(self::DELAY);
     }
 
     public function testSetServer()
@@ -50,6 +51,7 @@ class SMTPTest extends TestCase {
         $this->assertEquals('localhost', $this->testHelper->getPropertyValue($this->smtp, 'host'));
         $this->assertEquals('25', $this->testHelper->getPropertyValue($this->smtp, 'port'));
         $this->assertSame($this->smtp, $result);
+        usleep(self::DELAY);
     }
 
     public function testSetAuth()
@@ -59,6 +61,7 @@ class SMTPTest extends TestCase {
         $this->assertEquals('none', $this->testHelper->getPropertyValue($this->smtp, 'username'));
         $this->assertEquals('none', $this->testHelper->getPropertyValue($this->smtp, 'password'));
         $this->assertSame($this->smtp, $result);
+        usleep(self::DELAY);
     }
 
     public function testMessage()
@@ -95,6 +98,7 @@ class SMTPTest extends TestCase {
             ->setBody('This is a test part two');
 
         $this->smtp->send($message);
+        usleep(self::DELAY);
     }
 
 
