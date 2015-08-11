@@ -198,7 +198,7 @@ class SMTP
         if ($code !== '220'){
             throw new CodeException('220', $code, array_pop($this->resultStack));
         }
-        if(!stream_socket_enable_crypto($this->smtp, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
+        if(!\stream_socket_enable_crypto($this->smtp, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
             throw new CryptoException("Start TLS failed to enable crypto");
         }
         return $this;
