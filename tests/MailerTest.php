@@ -38,7 +38,7 @@ class MailerTest extends TestCase {
 
     public function testSend(){
         $mail = new Mailer(new Logger('Mailer'));
-        $mail->setServer(self::SERVER, self::PORT)
+        $status = $mail->setServer(self::SERVER, self::PORT)
             ->setAuth(self::USER, self::PASS) // email, password
             ->setFrom('Tom', 'bot@ym.txthinking.com') // your name, your email
             ->setFakeFrom('张全蛋', 'zhangquandan@hello.com') // a fake name, a fake email
