@@ -1,4 +1,4 @@
-Mailer
+Mailer [![Build Status](https://api.travis-ci.org/txthinking/Mailer.svg?branch=master)](https://travis-ci.org/txthinking/Mailer)
 =======
 
 A lightweight SMTP mail sender
