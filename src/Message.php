@@ -366,6 +366,7 @@ class Message
         $this->header['X-Priority'] = '3';
         $this->header['X-Mailer'] = 'Mailer (https://github.com/laasti/mailer)';
         $this->header['MIME-Version'] = '1.0';
+        $this->boundaryAlternative = md5(md5(time() . 'TXMailer') . uniqid());
         if (!empty($this->attachment)) {
             $this->boundaryMixed = md5(md5(time() . 'LaastiMailer') . uniqid());
             //$this->header['Content-Type'] = "multipart/mixed; charset=\"" . $this->charset . "\" \r\n\tboundary=\"" . $this->boundaryMixed . "\"";
