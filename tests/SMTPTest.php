@@ -6,9 +6,9 @@
  * Time: 10:57 AM
  */
 
-use Laasti\Mailer\Servers\SMTP;
+use Laasti\Mailer\Exceptions\SMTPException;
 use Laasti\Mailer\Message;
-use ERB\Testing\Tools\TestHelper;
+use Laasti\Mailer\Servers\SMTP;
 
 /**
  * Class SMTPTest
@@ -17,7 +17,7 @@ use ERB\Testing\Tools\TestHelper;
  * This test set requires the use of an open SMTP server mock.  Currently, I'm using FakeSMTPServer
  *
  */
-class SMTPTest extends TestCase {
+class SMTPTest extends  \PHPUnit_Framework_TestCase {
 
     /**
      * @var SMTP
@@ -32,10 +32,10 @@ class SMTPTest extends TestCase {
     public function setup()
     {
         $this->smtp = new SMTP();
-        $this->testHelper = new TestHelper();
+        //$this->testHelper = new TestHelper();
 
     }
-
+/*
     public function testSetServer()
     {
         $result = $this->smtp->setServer("localhost", "25", null);
@@ -70,7 +70,7 @@ class SMTPTest extends TestCase {
 */
 
     /**
-     * @expectedException \Laasti\Mailer\Exceptions\SMTPException
+     * @expectedException Laasti\Mailer\Exceptions\SMTPException
      */
     public function testConnectSMTPException()
     {

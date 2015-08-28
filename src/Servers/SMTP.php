@@ -1,7 +1,7 @@
 <?php
-/***************************************************\
+/**
  *
- *  Mailer (https://github.com/txthinking/Mailer)
+ *  SMTP taken from (https://github.com/txthinking/Mailer)
  *
  *  A lightweight PHP SMTP mail sender.
  *  Implement RFC0821, RFC0822, RFC1869, RFC2045, RFC2821
@@ -15,7 +15,7 @@
  *  Create Date 2012-07-25.
  *  Under the MIT license.
  *
- \***************************************************/
+ */
 
 namespace Laasti\Mailer\Servers;
 

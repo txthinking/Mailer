@@ -1,21 +1,6 @@
-<?php namespace Laasti\Mailer;
-/***************************************************\
- *
- *  Mailer (https://github.com/txthinking/Mailer)
- *
- *  A lightweight PHP SMTP mail sender.
- *  Implement RFC0821, RFC0822, RFC1869, RFC2045, RFC2821
- *
- *  Support html body, don't worry that the receiver's
- *  mail client can't support html, because Mailer will
- *  send both text/plain and text/html body, so if the
- *  mail client can't support html, it will display the
- *  text/plain body.
- *
- *  Create Date 2012-07-25.
- *  Under the MIT license.
- *
- \***************************************************/
+<?php
+
+namespace Laasti\Mailer;
 
 use Laasti\Mailer\Message;
 use Laasti\Mailer\Servers\ServerInterface;
@@ -23,10 +8,7 @@ use Laasti\Mailer\Servers\ServerInterface;
 /**
  * Class Mailer
  *
- * This class provides the Mailer public methods for backwards compatibility, but it is recommended
- * that you use the Laasti\Mailer\SMTP and Laasti\Mailer\Message classes going forward
- *
- * @package Tx
+ * @package Laasti
  */
 class Mailer{
     /**
@@ -47,6 +29,25 @@ class Mailer{
     public function __construct(ServerInterface $server=null){
         $this->server = $server;
         $this->message = new Message();
+    }
+
+    /**
+     * Message Factory
+     * @return Message
+     */
+    public function createMessage()
+    {
+        return new Message();
+    }
+
+    /**
+     * Clears current message so that a new message can be sent using the fluent API
+     * @return Mailer
+     */
+    public function clearMessage()
+    {
+        $this->message = new Message();
+        return $this;
     }
     
     /**

@@ -1,22 +1,19 @@
 <?php
 
-use Laasti\Mailer\Mailer;
-use Laasti\Mailer\Servers\SMTP;
-use Laasti\Mailer\Servers\Mail;
-use Laasti\Mailer\Servers\Sendmail;
-use Laasti\Mailer\Servers\NullServer;
-use Laasti\Mailer\Servers\FileServer;
 use Laasti\Mailer\Message;
-use Laasti\Mailer\Exceptions\SMTPException;
+use Laasti\Mailer\Servers\FileServer;
+use Laasti\Mailer\Servers\NullServer;
+use Laasti\Mailer\Servers\SMTP;
 use Monolog\Logger;
 
-class MailerTest extends TestCase {
+class MailerTest extends  \PHPUnit_Framework_TestCase {
 
     protected $smtp;
     protected $message;
 
     public function setup(){
         $this->smtp = new SMTP(new Logger('Mailer'), 'relais.videotron.ca', null, null, 25, null);
+        $this->fileserver = new FileServer(__DIR__.'/maillogs', new Logger('FileServer'));
         $this->message = new Message();
     }
 
@@ -27,7 +24,9 @@ class MailerTest extends TestCase {
             ->setFakeFrom('Whoot', 'bot@hello.com') // a fake name, a fake email
             ->addTo('Sonia', 'soniamarquette@gmail.com')
             ->setSubject('Test SMTP ' . time())
-            ->setBody('<h1>for test</h1>');
+            ->setBody('<h1>for testÉ</h1>')
+                ->addAttachment('license.txt', __DIR__.'/../LICENSE.txt')
+                ->addAttachment('readme.txt', __DIR__.'/../README.md');
 
         $status = $this->smtp->send($this->message);
         $this->assertTrue($status);
@@ -78,12 +77,14 @@ class MailerTest extends TestCase {
             ->addTo('Sonia', 'soniamarquette@gmail.com')
             ->setSubject('Test FileServerÉÉÉ ' . time())
             ->setTextBody('Text testsé')
-            ->setBody('<h1>for testé</h1>');
+            ->setBody('<h1>for testé</h1>')
+                ->addAttachment('license.txt', __DIR__.'/../LICENSE.txt')
+                ->addAttachment('readme.txt', __DIR__.'/../README.md');
 
         $status = $mail->send($this->message);
         $this->assertTrue($status);
     }
-
+/*
     public function testSend(){
         $status = (new Mailer(new SMTP(new Logger('Mailer'), 'relais.videotron.ca',null, null, 25, null)))
             ->setFrom('Sonia', 'bot@ym.txthinking.com') // your name, your email
@@ -94,6 +95,6 @@ class MailerTest extends TestCase {
             ->send();
         $this->assertTrue($status);
     }
-
+*/
 }
 

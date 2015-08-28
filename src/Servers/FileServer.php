@@ -33,16 +33,9 @@ class FileServer implements ServerInterface
             throw new \Laasti\Mailer\Exceptions\FileServerException('The message destination directory is not writeable: '.$this->filepath);
         }
         $in = $message->toString();
-        $data = $message->headersToString().$message->CRLF;
-        if (!is_null($message->getTextBody())) {
-            $data .= $message->getTextBody().$message->CRLF.$message->CRLF;
-        }
-        if (!is_null($message->getBody())) {
-            $data .= $message->getBody();
-        }
         $file = addslashes($this->filepath.'/'.date('Y-m-d H-i-s').'-'.md5($in).'.txt');
 
-        if (!file_put_contents($file, $data)) {
+        if (!file_put_contents($file, $in)) {
             throw new \Laasti\Mailer\Exceptions\FileServerException('Could not write message file to disk: '.$file);
         }
 

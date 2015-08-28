@@ -4,7 +4,7 @@
     "keywords": ["mail", "smtp", "sendmail", "email", "mailer"],
     "description": "A very lightweight PHP email sender",
     "license": "MIT",
-    "homepage": "http://github.com/laasti/Mailer",
+    "homepage": "http://github.com/laasti/mailer",
     "authors": [
       {
         "name": "Sonia Marquette",
@@ -18,17 +18,11 @@
     },
     "require-dev": {
         "monolog/monolog": "~1.13",
-        "phpunit/phpunit": "~4.0",
-        "erb/testing-tools": "dev-master"
+        "league/container": "~1.3"
     },
     "autoload": {
         "psr-4": {
             "Laasti\\Mailer\\": "src/"
         }
-    },
-    "autoload-dev": {
-        "classmap": [
-            "tests/TestCase.php"
-        ]
     }
 }

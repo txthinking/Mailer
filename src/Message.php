@@ -2,24 +2,6 @@
 
 namespace Laasti\Mailer;
 
-/* * *************************************************\
- *
- *  Mailer (https://github.com/txthinking/Mailer)
- *
- *  A lightweight PHP SMTP mail sender.
- *  Implement RFC0821, RFC0822, RFC1869, RFC2045, RFC2821
- *
- *  Support html body, don't worry that the receiver's
- *  mail client can't support html, because Mailer will
- *  send both text/plain and text/html body, so if the
- *  mail client can't support html, it will display the
- *  text/plain body.
- *
- *  Create Date 2012-07-25.
- *  Under the MIT license.
- *
-  \************************************************** */
-
 class Message
 {
 
@@ -380,19 +362,20 @@ class Message
         }
         $this->header['To'] = substr($this->header['To'], 0, -2);
         $this->header['Subject'] = $this->subject;
-        $this->header['Message-ID'] = '<' . md5('TX' . md5(time()) . uniqid()) . '@' . $this->fromEmail . '>';
+        $this->header['Message-ID'] = '<' . md5('Laasti' . md5(time()) . uniqid()) . '@' . $this->fromEmail . '>';
         $this->header['X-Priority'] = '3';
-        $this->header['X-Mailer'] = 'Mailer (https://github.com/txthinking/Mailer)';
+        $this->header['X-Mailer'] = 'Mailer (https://github.com/laasti/mailer)';
         $this->header['MIME-Version'] = '1.0';
         if (!empty($this->attachment)) {
-            $this->boundaryMixed = md5(md5(time() . 'TxMailer') . uniqid());
-            $this->header['Content-Type'] = "multipart/mixed; charset=\"" . $this->charset . "\" \r\n\tboundary=\"" . $this->boundaryMixed . "\"";
+            $this->boundaryMixed = md5(md5(time() . 'LaastiMailer') . uniqid());
+            //$this->header['Content-Type'] = "multipart/mixed; charset=\"" . $this->charset . "\" \r\n\tboundary=\"" . $this->boundaryMixed . "\"";
+            $this->header['Content-Type'] = "multipart/mixed; charset=\"" . $this->charset . "\"; boundary=\"" . $this->boundaryMixed . "\"";
         } else if (!empty($this->textBody)) {
             $this->header['Content-Type'] = "text/plain; charset=\"" . $this->charset . "\"";
         } else {
             $this->header['Content-Type'] = "multipart/alternative; charset=\"" . $this->charset . "\"; boundary=\"$this->boundaryAlternative\"";
         }
-        $this->boundaryAlternative = md5(md5(time() . 'TXMailer') . uniqid());
+        $this->boundaryAlternative = md5(md5(time() . 'LaastiMailer') . uniqid());
         return $this;
     }
 
@@ -479,7 +462,6 @@ class Message
     {
         $in = "";
         $in .= 'Content-Type: multipart/mixed; boundary="' . $this->boundaryMixed . '"'; //Mail, in header, not body
-        $in .= $this->CRLF;
         $in .= $this->CRLF;
         $in .= '--' . $this->boundaryMixed . $this->CRLF;
         $in .= "Content-Type: multipart/alternative; boundary=\"$this->boundaryAlternative\"" . $this->CRLF;

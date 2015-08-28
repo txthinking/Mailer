@@ -34,7 +34,7 @@ class Sendmail implements ServerInterface
         $email = !is_null($message->getFakeFromEmail()) ? $message->getFakeFromEmail() : $message->getFromEmail();
 
         // is popen() enabled?
-        if ( ! function_usable('popen')
+        if ( ! function_exists('popen')
                 || FALSE === ($fp = @popen($this->mailpath.' -oi -f '.$email.' -t -r '.$email, 'w'))
         ) {
             // server probably has popen disabled, so nothing we can do to get a verbose error.
