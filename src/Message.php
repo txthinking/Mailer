@@ -501,9 +501,17 @@ class Message
         $this->createHeader();
         $in = $this->headersToString();
         if (empty($this->attachment)) {
-            $in .= $this->createBody();
+            if (empty($this->body)) {
+                $in .= $this->createTextBody();
+            } else {
+                $in .= $this->createBody();
+            }
         } else {
-            $in .= $this->createBodyWithAttachment();
+            if (empty($this->body)) {
+                $in .= $this->createTextBodyWithAttachment();
+            } else {
+                $in .= $this->createBodyWithAttachment();
+            }
         }
         $in .= $this->CRLF . $this->CRLF . "." . $this->CRLF;
         return $in;
