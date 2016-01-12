@@ -338,7 +338,7 @@ class Message
      * Create mail header
      * @return $this
      */
-    protected function createHeader()
+    protected function createHeader($mail = false)
     {
         $this->header['Date'] = date('r');
 
@@ -366,17 +366,18 @@ class Message
         $this->header['X-Priority'] = '3';
         $this->header['X-Mailer'] = 'Mailer (https://github.com/laasti/mailer)';
         $this->header['MIME-Version'] = '1.0';
-        $this->boundaryAlternative = md5(md5(time() . 'TXMailer') . uniqid());
+        $this->boundaryAlternative = md5(md5(time() . 'LaastiMailer') . uniqid());
         if (!empty($this->attachment)) {
             $this->boundaryMixed = md5(md5(time() . 'LaastiMailer') . uniqid());
-            //$this->header['Content-Type'] = "multipart/mixed; charset=\"" . $this->charset . "\" \r\n\tboundary=\"" . $this->boundaryMixed . "\"";
             $this->header['Content-Type'] = "multipart/mixed; charset=\"" . $this->charset . "\"; boundary=\"" . $this->boundaryMixed . "\"";
         } else if (!empty($this->textBody)) {
             $this->header['Content-Type'] = "text/plain; charset=\"" . $this->charset . "\"";
+            if ($mail) {
+                $this->header['Content-Transfer-Encoding'] = "base64";
+            }
         } else {
             $this->header['Content-Type'] = "multipart/alternative; charset=\"" . $this->charset . "\"; boundary=\"$this->boundaryAlternative\"";
         }
-        $this->boundaryAlternative = md5(md5(time() . 'LaastiMailer') . uniqid());
         return $this;
     }
 
@@ -385,10 +386,12 @@ class Message
      *
      * @return string
      */
-    protected function createBody()
+    protected function createBody($mail = false)
     {
         $in = "";
-        $in .= "Content-Type: multipart/alternative; boundary=\"$this->boundaryAlternative\"" . $this->CRLF; //MAIL: In header, not body
+        if (!$mail) {
+            $in .= "Content-Type: multipart/alternative; boundary=\"$this->boundaryAlternative\"" . $this->CRLF; //MAIL: In header, not body
+        }
         $in .= $this->CRLF;
         $in .= "--" . $this->boundaryAlternative . $this->CRLF;
         $in .= "Content-Type: text/plain; charset=\"" . $this->charset . "\"" . $this->CRLF;
@@ -411,11 +414,13 @@ class Message
      *
      * @return string
      */
-    protected function createTextBody()
+    protected function createTextBody($mail = false)
     {
         $in = "";
-        $in .= "Content-Type: text/plain; charset=\"" . $this->charset . "\"" . $this->CRLF; //Mail, in header, not body
-        $in .= "Content-Transfer-Encoding: base64" . $this->CRLF; //Mail, in header, not body
+        if (!$mail) {
+            $in .= "Content-Type: text/plain; charset=\"" . $this->charset . "\"" . $this->CRLF; //Mail, in header, not body
+            $in .= "Content-Transfer-Encoding: base64" . $this->CRLF; //Mail, in header, not body
+        }
         $in .= $this->CRLF;
         $in .= chunk_split(base64_encode($this->getTextBody())) . $this->CRLF;
         return $in;
@@ -426,11 +431,13 @@ class Message
      *
      * @return string
      */
-    protected function createTextBodyWithAttachment()
+    protected function createTextBodyWithAttachment($mail = false)
     {
         $in = "";
         //Mixed could be related for image attachment in Thunderbird
-        $in .= 'Content-Type: multipart/mixed; boundary="' . $this->boundaryMixed . '"'; //Mail, in header, not body
+        if (!$mail) {
+            $in .= 'Content-Type: multipart/mixed; boundary="' . $this->boundaryMixed . '"'; //Mail, in header, not body
+        }
         $in .= $this->CRLF;
         $in .= $this->CRLF;
         $in .= '--' . $this->boundaryMixed . $this->CRLF;
@@ -459,10 +466,12 @@ class Message
      *
      * @return string
      */
-    protected function createBodyWithAttachment()
+    protected function createBodyWithAttachment($mail = false)
     {
         $in = "";
-        $in .= 'Content-Type: multipart/mixed; boundary="' . $this->boundaryMixed . '"'; //Mail, in header, not body
+        if (!$mail) {
+            $in .= 'Content-Type: multipart/mixed; boundary="' . $this->boundaryMixed . '"'; //Mail, in header, not body
+        }
         $in .= $this->CRLF;
         $in .= '--' . $this->boundaryMixed . $this->CRLF;
         $in .= "Content-Type: multipart/alternative; boundary=\"$this->boundaryAlternative\"" . $this->CRLF;
@@ -495,25 +504,35 @@ class Message
         return $in;
     }
 
-    public function toString()
+    public function getEncodedBody($mail = false)
     {
+        $this->createHeader($mail);
         $in = '';
-        $this->createHeader();
-        $in = $this->headersToString();
         if (empty($this->attachment)) {
             if (empty($this->body)) {
-                $in .= $this->createTextBody();
+                $in .= $this->createTextBody($mail);
             } else {
-                $in .= $this->createBody();
+                $in .= $this->createBody($mail);
             }
         } else {
             if (empty($this->body)) {
-                $in .= $this->createTextBodyWithAttachment();
+                $in .= $this->createTextBodyWithAttachment($mail);
             } else {
-                $in .= $this->createBodyWithAttachment();
+                $in .= $this->createBodyWithAttachment($mail);
             }
         }
-        $in .= $this->CRLF . $this->CRLF . "." . $this->CRLF;
+        $in .= $this->CRLF;
+
+        return $in;
+    }
+
+    public function toString($mail = false)
+    {
+        $in = '';
+        $this->createHeader($mail);
+        $in = $this->headersToString();
+        $in .= $this->getEncodedBody($mail);
+        //$in .= $this->CRLF . $this->CRLF. "." . $this->CRLF;
         return $in;
     }
 
@@ -528,7 +547,7 @@ class Message
 
     protected function safeHeaderString($str)
     {
-        return '=?'.$this->charset.'?B?'.base64_encode($str).'?=';
+        return '=?' . $this->charset . '?B?' . base64_encode($str) . '?=';
         $str = str_replace(array("\r", "\n"), '', $str);
         $icon_enabled = extension_loaded('iconv');
         if ($this->charset === 'UTF-8') {

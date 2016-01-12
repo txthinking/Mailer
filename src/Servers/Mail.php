@@ -27,11 +27,9 @@ class Mail implements ServerInterface
     }
 
     public function send(Message $message) {
-        $in = $message->toString();
-        
         // most documentation of sendmail using the "-f" flag lacks a space after it, however
-	// we've encountered servers that seem to require it to be in place.
-	$sent = mail($message->getHeader('To'), $message->getSubject(), $in, $message->headersToString(), '-f '.$message->getHeader('Return-Path'));
+        // we've encountered servers that seem to require it to be in place.
+        $sent = mail($message->getHeader('To'), $message->getSubject(), $message->getEncodedBody(true), $message->headersToString(), '-f '.$message->getHeader('Return-Path'));
 
         if ($sent) {
             $this->logger && $this->logger->addDebug('Sent: '. $message->getHeader('To'));
