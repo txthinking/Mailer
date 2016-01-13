@@ -136,6 +136,7 @@ class SMTP implements ServerInterface
     public function send(Message $message){
         $this->logger && $this->logger->addDebug('Set: a message will be sent');
         $this->message = $message;
+        
         $this->connect()
             ->ehlo();
 
@@ -293,6 +294,7 @@ class SMTP implements ServerInterface
             throw new CodeException('354', $code, array_pop($this->resultStack));
         }
         $in = $this->message->toString();
+        $in .= $this->CRLF . $this->CRLF. "." . $this->CRLF;
         $code = $this->pushStack($in);
         if ($code !== '250'){
             throw new CodeException('250', $code, array_pop($this->resultStack));

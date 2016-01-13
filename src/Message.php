@@ -366,9 +366,11 @@ class Message
         $this->header['X-Priority'] = '3';
         $this->header['X-Mailer'] = 'Mailer (https://github.com/laasti/mailer)';
         $this->header['MIME-Version'] = '1.0';
-        $this->boundaryAlternative = md5(md5(time() . 'LaastiMailer') . uniqid());
+        
+        $this->boundaryAlternative = md5(md5(time() . 'LaastiMailer') . uniqid("", true));
         if (!empty($this->attachment)) {
-            $this->boundaryMixed = md5(md5(time() . 'LaastiMailer') . uniqid());
+            $this->boundaryMixed = md5(md5(time() . 'LaastiMailer') . uniqid("", true));
+            var_dump($this->boundaryMixed);
             $this->header['Content-Type'] = "multipart/mixed; charset=\"" . $this->charset . "\"; boundary=\"" . $this->boundaryMixed . "\"";
         } else if (!empty($this->textBody)) {
             $this->header['Content-Type'] = "text/plain; charset=\"" . $this->charset . "\"";
@@ -436,7 +438,7 @@ class Message
         $in = "";
         //Mixed could be related for image attachment in Thunderbird
         if (!$mail) {
-            $in .= 'Content-Type: multipart/mixed; boundary="' . $this->boundaryMixed . '"'; //Mail, in header, not body
+            //$in .= 'Content-Type: multipart/mixed; boundary="' . $this->boundaryMixed . '"'; //Mail, in header, not body
         }
         $in .= $this->CRLF;
         $in .= $this->CRLF;
@@ -531,7 +533,20 @@ class Message
         $in = '';
         $this->createHeader($mail);
         $in = $this->headersToString();
-        $in .= $this->getEncodedBody($mail);
+        if (empty($this->attachment)) {
+            if (empty($this->body)) {
+                $in .= $this->createTextBody($mail);
+            } else {
+                $in .= $this->createBody($mail);
+            }
+        } else {
+            if (empty($this->body)) {
+                $in .= $this->createTextBodyWithAttachment($mail);
+            } else {
+                $in .= $this->createBodyWithAttachment($mail);
+            }
+        }
+        $in .= $this->CRLF;
         //$in .= $this->CRLF . $this->CRLF. "." . $this->CRLF;
         return $in;
     }
