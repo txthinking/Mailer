@@ -370,7 +370,6 @@ class Message
         $this->boundaryAlternative = md5(md5(time() . 'LaastiMailer') . uniqid("", true));
         if (!empty($this->attachment)) {
             $this->boundaryMixed = md5(md5(time() . 'LaastiMailer') . uniqid("", true));
-            var_dump($this->boundaryMixed);
             $this->header['Content-Type'] = "multipart/mixed; charset=\"" . $this->charset . "\"; boundary=\"" . $this->boundaryMixed . "\"";
         } else if (!empty($this->textBody)) {
             $this->header['Content-Type'] = "text/plain; charset=\"" . $this->charset . "\"";
