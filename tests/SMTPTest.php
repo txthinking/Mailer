@@ -17,7 +17,8 @@ use ERB\Testing\Tools\TestHelper;
  * This test set requires the use of an open SMTP server mock.  Currently, I'm using FakeSMTPServer
  *
  */
-class SMTPTest extends TestCase {
+class SMTPTest extends TestCase
+{
 
     /**
      * @var SMTP

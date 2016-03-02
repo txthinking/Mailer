@@ -117,7 +117,8 @@ class SMTP
      * @param string $password
      * @return $this
      */
-    public function setAuth($username, $password){
+    public function setAuth($username, $password)
+    {
         $this->username = $username;
         $this->password = $password;
         $this->logger && $this->logger->debug("Set: the auth");
@@ -129,7 +130,8 @@ class SMTP
      * @param $ehlo
      * @return $this
      */
-    public function setEhlo($ehlo){
+    public function setEhlo($ehlo)
+    {
         $this->ehlo = $ehlo;
         return $this;
     }
@@ -143,7 +145,8 @@ class SMTP
      * @throws CryptoException
      * @throws SMTPException
      */
-    public function send(Message $message){
+    public function send(Message $message)
+    {
         $this->logger && $this->logger->debug('Set: a message will be sent');
         $this->message = $message;
         $this->connect()
@@ -168,7 +171,8 @@ class SMTP
      * @throws CodeException
      * @throws SMTPException
      */
-    protected function connect(){
+    protected function connect()
+    {
         $this->logger && $this->logger->debug("Connecting to {$this->host} at {$this->port}");
         $host = ($this->secure == 'ssl') ? 'ssl://' . $this->host : $this->host;
         $this->smtp = @fsockopen($host, $this->port);
@@ -192,7 +196,8 @@ class SMTP
      * @throws CryptoException
      * @throws SMTPException
      */
-    protected function starttls(){
+    protected function starttls()
+    {
         $in = "STARTTLS" . $this->CRLF;
         $code = $this->pushStack($in);
         if ($code !== '220'){
@@ -211,7 +216,8 @@ class SMTP
      * @throws CodeException
      * @throws SMTPException
      */
-    protected function ehlo(){
+    protected function ehlo()
+    {
         $in = "EHLO " . $this->ehlo . $this->CRLF;
         $code = $this->pushStack($in);
         if ($code !== '250'){
@@ -262,7 +268,8 @@ class SMTP
      * @throws CodeException
      * @throws SMTPException
      */
-    protected function mailFrom(){
+    protected function mailFrom()
+    {
         $in = "MAIL FROM:<{$this->message->getFromEmail()}>" . $this->CRLF;
         $code = $this->pushStack($in);
         if ($code !== '250') {
@@ -278,8 +285,9 @@ class SMTP
      * @throws CodeException
      * @throws SMTPException
      */
-    protected function rcptTo(){
-        foreach ($this->message->getTo() as $toEmail) {
+    protected function rcptTo()
+    {
+        foreach ($this->message->getTo() as $toEmail=>$_) {
             $in = "RCPT TO:<" . $toEmail . ">" . $this->CRLF;
             $code = $this->pushStack($in);
             if ($code !== '250') {
@@ -297,7 +305,8 @@ class SMTP
      * @throws CodeException
      * @throws SMTPException
      */
-    protected function data(){
+    protected function data()
+    {
         $in = "DATA" . $this->CRLF;
         $code = $this->pushStack($in);
         if ($code !== '354') {
@@ -318,7 +327,8 @@ class SMTP
      * @throws CodeException
      * @throws SMTPException
      */
-    protected function quit(){
+    protected function quit()
+    {
         $in = "QUIT" . $this->CRLF;
         $code = $this->pushStack($in);
         if ($code !== '221'){
@@ -341,7 +351,8 @@ class SMTP
      * @return string
      * @throws SMTPException
      */
-    protected function getCode() {
+    protected function getCode()
+    {
         while ($str = fgets($this->smtp, 515)) {
             $this->logger && $this->logger->debug("Got: ". $str);
             $this->resultStack[] = $str;

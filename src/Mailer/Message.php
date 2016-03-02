@@ -1,4 +1,4 @@
-<?php namespace Tx\Mailer;
+<?php
 /***************************************************\
  *
  *  Mailer (https://github.com/txthinking/Mailer)
@@ -16,6 +16,8 @@
  *  Under the MIT license.
  *
  \***************************************************/
+namespace Tx\Mailer;
+
 class Message
 {
     /**
@@ -117,9 +119,9 @@ class Message
      * @param string $email
      * @return $this
      */
-    public function setTo($name, $email){
-        $this->to[$name] = $email;
-        return $this;
+    public function setTo($name, $email)
+    {
+        return $this->addTo($name, $email);
     }
 
     /**
@@ -128,8 +130,9 @@ class Message
      * @param string $email
      * @return $this
      */
-    public function addTo($name, $email){
-        $this->to[$name] = $email;
+    public function addTo($name, $email)
+    {
+        $this->to[$email] = $name;
         return $this;
     }
 
@@ -138,7 +141,8 @@ class Message
      * @param string $subject
      * @return $this
      */
-    public function setSubject($subject){
+    public function setSubject($subject)
+    {
         $this->subject = $subject;
         return $this;
     }
@@ -148,7 +152,8 @@ class Message
      * @param string $body
      * @return $this
      */
-    public function setBody($body){
+    public function setBody($body)
+    {
         $this->body = $body;
         return $this;
     }
@@ -159,7 +164,8 @@ class Message
      * @param $path
      * @return $this
      */
-    public function setAttachment($name, $path){
+    public function setAttachment($name, $path)
+    {
         $this->attachment[$name] = $path;
         return $this;
     }
@@ -170,7 +176,8 @@ class Message
      * @param $path
      * @return $this
      */
-    public function addAttachment($name, $path){
+    public function addAttachment($name, $path)
+    {
         $this->attachment[$name] = $path;
         return $this;
     }
@@ -244,7 +251,8 @@ class Message
      * Create mail header
      * @return $this
      */
-    protected function createHeader(){
+    protected function createHeader()
+    {
         $this->header['Date'] = date('r');
 
         if(!empty($this->fakeFromEmail)){
@@ -256,7 +264,10 @@ class Message
         }
 
         $this->header['To'] = '';
-        foreach ($this->to as $toName => $toEmail) {
+        foreach ($this->to as $toEmail => $toName) {
+            if(empty($toName)){
+                $toName = $toEmail;
+            }
             $this->header['To'] .= $toName . " <" . $toEmail . ">, ";
         }
         $this->header['To'] = substr($this->header['To'], 0, -2);
@@ -278,7 +289,8 @@ class Message
      *
      * @return string
      */
-    protected function createBody(){
+    protected function createBody()
+    {
         $in = "";
         $in .= "Content-Type: multipart/alternative; boundary=\"$this->boundaryAlternative\"" . $this->CRLF;
         $in .= $this->CRLF;
@@ -303,7 +315,8 @@ class Message
      *
      * @return string
      */
-    protected function createBodyWithAttachment(){
+    protected function createBodyWithAttachment()
+    {
         $in = "";
         $in .= $this->CRLF;
         $in .= $this->CRLF;
@@ -338,7 +351,8 @@ class Message
         return $in;
     }
 
-    public function toString(){
+    public function toString()
+    {
         $in = '';
         $this->createHeader();
         foreach ($this->header as $key => $value) {

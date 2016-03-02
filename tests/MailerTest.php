@@ -6,46 +6,50 @@ use \Tx\Mailer\Message;
 use \Tx\Mailer\Exceptions\SMTPException;
 use \Monolog\Logger;
 
-class MailerTest extends TestCase {
+class MailerTest extends TestCase
+{
 
     /** @var  SMTP */
     protected $smtp;
     /** @var  Message */
     protected $message;
 
-    public function setup(){
+    public function setup()
+    {
         $this->smtp = new SMTP(new Logger('SMTP'));
         $this->message = new Message();
     }
 
-    public function testSMTP(){
+    public function testSMTP()
+    {
         $this->smtp
             ->setServer(self::SERVER, self::PORT)
             ->setAuth(self::USER, self::PASS); // email, password
 
         $this->message
-            ->setFrom('Tom', 'bot@ym.txthinking.com') // your name, your email
-            ->setFakeFrom('heelo', 'bot@hello.com') // a fake name, a fake email
-            ->addTo('Cloud', 'cloud@txthinking.com')
+            ->setFrom(self::FROM_NAME, self::FROM_EMAIL) // your name, your email
+            ->setFakeFrom('Hello', 'bot@fakeemail.com') // a fake name, a fake email
+            ->addTo(self::TO_NAME, self::TO_EMAIL)
             ->setSubject('Test SMTP ' . time())
             ->setBody('<h1>for test</h1>')
-            ->addAttachment('host', __FILE__);
+            ->addAttachment('test', __FILE__);
 
         $status = $this->smtp->send($this->message);
         $this->assertTrue($status);
         usleep(self::DELAY);
     }
 
-    public function testSend(){
+    public function testSend()
+    {
         $mail = new Mailer(new Logger('Mailer'));
         $status = $mail->setServer(self::SERVER, self::PORT)
             ->setAuth(self::USER, self::PASS) // email, password
-            ->setFrom('Tom', 'bot@ym.txthinking.com') // your name, your email
+            ->setFrom(self::FROM_NAME, self::FROM_EMAIL) // your name, your email
             ->setFakeFrom('张全蛋', 'zhangquandan@hello.com') // a fake name, a fake email
-            ->addTo('Cloud', 'cloud@txthinking.com')
+            ->addTo(self::TO_NAME, self::TO_EMAIL)
             ->setSubject('hello '. time())
             ->setBody('Hi, boy')
-            ->addAttachment('host', __FILE__)
+            ->addAttachment('test', __FILE__)
             ->send();
         $this->assertTrue($status);
         usleep(self::DELAY);
