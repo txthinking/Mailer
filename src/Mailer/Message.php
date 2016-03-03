@@ -255,20 +255,26 @@ class Message
     {
         $this->header['Date'] = date('r');
 
+        $fromName = "";
+        $fromEmail = $this->fromEmail;
+        if(!empty($this->fromName)){
+            $fromName = sprintf("=?utf-8?B?%s?= ", base64_encode($this->fromName));
+        }
         if(!empty($this->fakeFromEmail)){
-            $this->header['Return-Path'] = $this->fakeFromEmail;
-            $this->header['From'] = $this->fakeFromName . " <" . $this->fakeFromEmail . ">";
-        } else{
-            $this->header['Return-Path'] = $this->fromEmail;
-            $this->header['From'] = $this->fromName . " <" . $this->fromEmail .">";
+            if(!empty($this->fakeFromName)){
+                $fromName = sprintf("=?utf-8?B?%s?= ", base64_encode($this->fakeFromName));
+            }
+            $fromEmail = $this->fakeFromEmail;
         }
 
+        $this->header['Return-Path'] = $fromEmail;
+        $this->header['From'] = $fromName . "<" . $fromEmail .">";
         $this->header['To'] = '';
         foreach ($this->to as $toEmail => $toName) {
-            if(empty($toName)){
-                $toName = $toEmail;
+            if(!empty($toName)){
+                $toName = sprintf("=?utf-8?B?%s?= ", base64_encode($toName));
             }
-            $this->header['To'] .= $toName . " <" . $toEmail . ">, ";
+            $this->header['To'] .= $toName . "<" . $toEmail . ">, ";
         }
         $this->header['To'] = substr($this->header['To'], 0, -2);
         $this->header['Subject'] = $this->subject;
