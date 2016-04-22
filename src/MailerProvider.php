@@ -2,7 +2,7 @@
 
 namespace Laasti\Mailer;
 
-class MailerProvider extends \League\Container\ServiceProvider
+class MailerProvider extends \League\Container\ServiceProvider\AbstractServiceProvider
 {
 
     protected $provides = [
@@ -15,7 +15,7 @@ class MailerProvider extends \League\Container\ServiceProvider
     {
         $di = $this->getContainer();
 
-        $config = $di['config.mailer'];
+        $config = $di->get('config')['mailer'];
         if (!isset($config['arguments'])) {
             $config['arguments'] = [];
         }
