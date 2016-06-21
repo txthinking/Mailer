@@ -277,7 +277,12 @@ class Message
             $this->header['To'] .= $toName . "<" . $toEmail . ">, ";
         }
         $this->header['To'] = substr($this->header['To'], 0, -2);
-        $this->header['Subject'] = $this->subject;
+        if(empty($this->subject)){
+            $subject = '';
+        }else{
+            $subject = sprintf("=?utf-8?B?%s?= ", base64_encode($this->subject));
+        }
+        $this->header['Subject'] = $subject;
         $this->header['Message-ID'] = '<' . md5('TX'.md5(time()).uniqid()) . '@' . $this->fromEmail . '>';
         $this->header['X-Priority'] = '3';
         $this->header['X-Mailer'] = 'Mailer (https://github.com/txthinking/Mailer)';
