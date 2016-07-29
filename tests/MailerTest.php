@@ -30,6 +30,8 @@ class MailerTest extends TestCase
             ->setFrom(self::FROM_NAME, self::FROM_EMAIL) // your name, your email
             ->setFakeFrom('Hello', 'bot@fakeemail.com') // a fake name, a fake email
             ->addTo(self::TO_NAME, self::TO_EMAIL)
+            ->addCc(self::CC_NAME, self::CC_EMAIL)
+            ->addBcc(self::BCC_NAME, self::BCC_EMAIL)
             ->setSubject('Test SMTP ' . time())
             ->setBody('<h1>for test</h1>')
             ->addAttachment('test', __FILE__);
@@ -42,12 +44,14 @@ class MailerTest extends TestCase
     public function testSend()
     {
         $mail = new Mailer(new Logger('Mailer'));
-        $status = $mail->setServer(self::SERVER, self::PORT)
+        $status = $mail->setServer(self::SERVER, self::PORT_TLS, 'tls')
             ->setAuth(self::USER, self::PASS) // email, password
             ->setFrom(self::FROM_NAME, self::FROM_EMAIL) // your name, your email
             ->setFakeFrom('张全蛋', 'zhangquandan@hello.com') // a fake name, a fake email
             ->addTo(self::TO_NAME, self::TO_EMAIL)
-            ->setSubject('hello '. time())
+            ->addCc(self::CC_NAME, self::CC_EMAIL)
+            ->addBcc(self::BCC_NAME, self::BCC_EMAIL)
+            ->setSubject('Test Mailer '. time())
             ->setBody('Hi, boy')
             ->addAttachment('test', __FILE__)
             ->send();

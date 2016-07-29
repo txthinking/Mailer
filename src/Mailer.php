@@ -128,6 +128,30 @@ class Mailer
     }
 
     /**
+     * add cc mail receiver
+     * @param string $name
+     * @param string $email
+     * @return $this
+     */
+    public function addCc($name, $email)
+    {
+        $this->message->addCc($name, $email);
+        return $this;
+    }
+
+    /**
+     * add bcc mail receiver
+     * @param string $name
+     * @param string $email
+     * @return $this
+     */
+    public function addBcc($name, $email)
+    {
+        $this->message->addBcc($name, $email);
+        return $this;
+    }
+
+    /**
      * set mail subject
      * @param string $subject
      * @return $this

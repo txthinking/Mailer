@@ -287,7 +287,12 @@ class SMTP
      */
     protected function rcptTo()
     {
-        foreach ($this->message->getTo() as $toEmail=>$_) {
+        $to = array_merge(
+            $this->message->getTo(),
+            $this->message->getCc(),
+            $this->message->getBcc()
+        );
+        foreach ($to as $toEmail=>$_) {
             $in = "RCPT TO:<" . $toEmail . ">" . $this->CRLF;
             $code = $this->pushStack($in);
             if ($code !== '250') {

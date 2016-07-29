@@ -77,7 +77,7 @@ class SMTPTest extends TestCase
 
     public function testTLSMessage()
     {
-        $this->smtp->setServer(self::SERVER, self::PORT_TLS, 'tls')
+        $this->smtp->setServer(self::SERVER, self::PORT, 'tls')
                    ->setAuth(self::USER, self::PASS);
 
         $status = $this->smtp->send($this->message);
