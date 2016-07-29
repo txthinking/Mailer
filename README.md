@@ -16,36 +16,16 @@ $ composer require txthinking/mailer
 use Tx\Mailer;
 
 $ok = (new Mailer())
-    ->setServer('smtp.ym.163.com', 25)
-    ->setAuth('', '') // email, password
-    ->setFrom('You', '') //your name, your email
-    ->setFakeFrom('heelo', 'bot@fake.com') // if u want, a fake name, a fake email
-    ->addTo('Cloud', 'cloud@txthinking.com')
-    ->setSubject('Test Mailer')
-    ->setBody('Hi, I <strong>love</strong> you.')
+    ->setServer('smtp.server.com', 25)
+    ->setAuth('tom@server.com', 'password')
+    ->setFrom('Tom', 'tom@server.com')
+    ->setFakeFrom('Obama', 'fake@address.com') // if u want, a fake name, a fake email
+    ->addTo('Jerry', 'jerry@server.com')
+    ->setSubject('Hello')
+    ->setBody('Hi, Jerry! I <strong>love</strong> you.')
     ->addAttachment('host', '/etc/hosts')
     ->send();
 var_dump($ok);
 ```
-OR
-```
-<?php
-use \Tx\Mailer\SMTP;
-use \Tx\Mailer\Message;
-use \Monolog\Logger;
+More [Example](https://github.com/txthinking/Mailer/tree/master/tests)
 
-$smtp = new SMTP(); // new SMTP(new Logger('Mailer')); # set logger to receive debug log
-$smtp->setServer('smtp.ym.163.com', 25)
-    ->setAuth('bot@ym.txthinking.com', ''); // email, password
-
-$message = new Message();
-$message->setFrom('Tom', 'your@mail.com') // your name, your email
-    ->setFakeFrom('heelo', 'bot@fake.com') // if u want, a fake name, a fake email
-    ->addTo('Cloud', 'cloud@txthinking.com')
-    ->setSubject('Test Mailer')
-    ->setBody('<h1>For test</h1>')
-    ->addAttachment('host', '/etc/hosts');
-
-$ok = $smtp->send($message);
-var_dump($ok);
-```
