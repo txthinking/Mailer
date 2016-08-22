@@ -96,6 +96,28 @@ class Message
      */
     protected $CRLF = "\r\n";
 
+
+    /**
+     * Address for the reply-to header
+     * @var string
+     */
+    protected $replyToName;
+
+    /**
+     * Address for the reply-to header
+     * @var string
+     */
+    protected $replyToEmail;
+
+
+    public function setReplyTo($name, $email)
+    {
+        $this->replyToName = $name;
+        $this->replyToEmail = $email;
+        return $this;
+    }
+
+
     /**
      * set mail from
      * @param string $name
@@ -343,6 +365,8 @@ class Message
             $this->header['Bcc'] .= $toName . "<" . $toEmail . ">, ";
         }
         $this->header['Bcc'] = substr($this->header['Bcc'], 0, -2);
+
+        $this->header['Reply-To'] = $this->replyToName . "<" . $this->replyToEmail . ">";
 
         if(empty($this->subject)){
             $subject = '';
