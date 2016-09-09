@@ -62,6 +62,11 @@ class SMTP
     protected $password;
 
     /**
+     * oauth access token
+     */
+    protected $oauthToken;
+
+    /**
      * $this->CRLF
      * @var string
      */
@@ -112,7 +117,7 @@ class SMTP
     }
 
     /**
-     * auth with server
+     * auth login with server
      * @param string $username
      * @param string $password
      * @return $this
@@ -121,7 +126,19 @@ class SMTP
     {
         $this->username = $username;
         $this->password = $password;
-        $this->logger && $this->logger->debug("Set: the auth");
+        $this->logger && $this->logger->debug("Set: the auth login");
+        return $this;
+    }
+
+    /**
+     * auth oauthbearer with server
+     * @param string $accessToken
+     * @return $this
+     */
+    public function setOAuth($accessToken)
+    {
+        $this->oauthToken = $accessToken;
+        $this->logger && $this->logger->debug("Set: the auth oauthbearer");
         return $this;
     }
 
@@ -156,8 +173,12 @@ class SMTP
             $this->starttls()
                 ->ehlo();
         }
-        $this->authLogin()
-            ->mailFrom()
+        if ($this->username !== null || $this->password !== null) {
+            $this->authLogin();
+        } elseif ($this->oauthToken !== null) {
+            $this->authOAuthBearer();
+        }
+        $this->mailFrom()
             ->rcptTo()
             ->data()
             ->quit();
@@ -237,12 +258,6 @@ class SMTP
      */
     protected function authLogin()
     {
-        if ($this->username === null && $this->password === null) {
-            // Unless the user has specifically set a username/password
-            // Do not try to authorize.
-            return $this;
-        }
-
         $in = "AUTH LOGIN" . $this->CRLF;
         $code = $this->pushStack($in);
         if ($code !== '334'){
@@ -254,6 +269,60 @@ class SMTP
             throw new CodeException('334', $code, array_pop($this->resultStack));
         }
         $in = base64_encode($this->password) . $this->CRLF;
+        $code = $this->pushStack($in);
+        if ($code !== '235'){
+            throw new CodeException('235', $code, array_pop($this->resultStack));
+        }
+        return $this;
+    }
+
+    /**
+     * SMTP AUTH OAUTHBEARER
+     * SUCCESS 235
+     * @return $this
+     * @throws CodeException
+     * @throws SMTPException
+     */
+    protected function authOAuthBearer()
+    {
+        $authStr = sprintf("n,a=%s,%shost=%s%sport=%s%sauth=Bearer %s%s%s",
+            $this->message->getFromEmail(),
+            chr(1),
+            $this->host,
+            chr(1),
+            $this->port,
+            chr(1),
+            $this->oauthToken,
+            chr(1),
+            chr(1)
+        );
+        $authStr = base64_encode($authStr);
+        $in = "AUTH OAUTHBEARER $authStr" . $this->CRLF;
+        $code = $this->pushStack($in);
+        if ($code !== '235'){
+            throw new CodeException('235', $code, array_pop($this->resultStack));
+        }
+        return $this;
+    }
+
+    /**
+     * SMTP AUTH XOAUTH2
+     * SUCCESS 235
+     * @return $this
+     * @throws CodeException
+     * @throws SMTPException
+     */
+    protected function authXOAuth2()
+    {
+        $authStr = sprintf("user=%s%sauth=Bearer %s%s%s",
+            $this->message->getFromEmail(),
+            chr(1),
+            $this->oauthToken,
+            chr(1),
+            chr(1)
+        );
+        $authStr = base64_encode($authStr);
+        $in = "AUTH XOAUTH2 $authStr" . $this->CRLF;
         $code = $this->pushStack($in);
         if ($code !== '235'){
             throw new CodeException('235', $code, array_pop($this->resultStack));

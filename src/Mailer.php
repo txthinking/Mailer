@@ -80,6 +80,17 @@ class Mailer
     }
 
     /**
+     * auth oauthbearer with server
+     * @param string $accessToken
+     * @return $this
+     */
+    public function setOAuth($accessToken)
+    {
+        $this->smtp->setOAuth($accessToken);
+        return $this;
+    }
+
+    /**
      * set mail from
      * @param string $name
      * @param string $email

@@ -34,5 +34,11 @@ class TestCase extends \PHPUnit_Framework_TestCase
 
     /** delay in microsends between SMTP tests to avoid API limits (we're allowed two messages/second) */
     const DELAY = 500000; // half a second
+
+    const  OAUTH_SERVER = 'smtp.gmail.com';
+    const  OAUTH_PORT = '587';
+    const  OAUTH_TOKEN = '';
+    const  OAUTH_FROM_NAME = 'Cloud';
+    const  OAUTH_FROM_EMAIL = 'cloud@txthinking.com';
 }
 
