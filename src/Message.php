@@ -362,7 +362,7 @@ class Message
         }
         $this->header['To'] = substr($this->header['To'], 0, -2);
         $this->header['Subject'] = $this->subject;
-        $this->header['Message-ID'] = '<' . md5('Laasti' . md5(time()) . uniqid()) . '@' . $this->fromEmail . '>';
+        $this->header['Message-ID'] = '<' . md5('Laasti' . md5(time()) . uniqid()) . '-' . $this->fromEmail . '>';
         $this->header['X-Priority'] = '3';
         $this->header['X-Mailer'] = 'Mailer (https://github.com/laasti/mailer)';
         $this->header['MIME-Version'] = '1.0';
