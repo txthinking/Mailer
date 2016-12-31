@@ -28,7 +28,7 @@ class MailerTest extends TestCase
 
         $this->message
             ->setFrom(self::FROM_NAME, self::FROM_EMAIL) // your name, your email
-            ->setFakeFrom('Hello', 'bot@fakeemail.com') // a fake name, a fake email
+            //->setFakeFrom('Hello', 'bot@fakeemail.com') // a fake name, a fake email
             ->addTo(self::TO_NAME, self::TO_EMAIL)
             ->addCc(self::CC_NAME, self::CC_EMAIL)
             ->addBcc(self::BCC_NAME, self::BCC_EMAIL)
@@ -47,7 +47,7 @@ class MailerTest extends TestCase
         $status = $mail->setServer(self::SERVER, self::PORT_TLS, 'tls')
             ->setAuth(self::USER, self::PASS) // email, password
             ->setFrom(self::FROM_NAME, self::FROM_EMAIL) // your name, your email
-            ->setFakeFrom('张全蛋', 'zhangquandan@hello.com') // a fake name, a fake email
+            //->setFakeFrom('张全蛋', 'zhangquandan@hello.com') // a fake name, a fake email
             ->addTo(self::TO_NAME, self::TO_EMAIL)
             ->addCc(self::CC_NAME, self::CC_EMAIL)
             ->addBcc(self::BCC_NAME, self::BCC_EMAIL)

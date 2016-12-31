@@ -19,8 +19,8 @@ class TestCase extends \PHPUnit_Framework_TestCase
     const PASS = 'b6e38ddc0f1e9d';
 
     /** from */
-    const FROM_NAME = 'mailer';
-    const FROM_EMAIL = 'bot@mail.txthinking.com';
+    const FROM_NAME = 'Mailer';
+    const FROM_EMAIL = '739f35c64d-9422d2@inbox.mailtrap.io';
     /** to */
     const TO_NAME = 'Test To';
     const TO_EMAIL = 'cloud@txthinking.com';
