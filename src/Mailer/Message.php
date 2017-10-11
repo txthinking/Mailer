@@ -153,6 +153,7 @@ class Message
      */
     public function setTo($name, $email)
     {
+        $this->to = [];
         return $this->addTo($name, $email);
     }
 
