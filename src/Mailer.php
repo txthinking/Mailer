@@ -122,7 +122,7 @@ class Mailer
      */
     public function setTo($name, $email)
     {
-        $this->message->addTo($name, $email);
+        $this->message->setTo($name, $email);
         return $this;
     }
 
