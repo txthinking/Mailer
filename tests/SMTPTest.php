@@ -40,7 +40,7 @@ class SMTPTest extends TestCase
         $this->testHelper = new TestHelper();
         $this->message = new Message();
         $this->message->setFrom('You', 'nobody@nowhere.no')
-                ->setTo('Them', 'them@nowhere.no')
+                ->addTo('Them', 'them@nowhere.no')
                 ->setSubject('This is a test')
                 ->setBody('This is a test part two');
         usleep(self::DELAY);
@@ -94,7 +94,7 @@ class SMTPTest extends TestCase
             ->setAuth('none', 'none');
         $message = new Message();
         $message->setFrom('You', 'nobody@nowhere.no')
-            ->setTo('Them', 'them@nowhere.no')
+            ->addTo('Them', 'them@nowhere.no')
             ->setSubject('This is a test')
             ->setBody('This is a test part two');
 

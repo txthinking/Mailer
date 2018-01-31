@@ -115,18 +115,6 @@ class Mailer
     }
 
     /**
-     * set mail receiver
-     * @param string $name
-     * @param string $email
-     * @return $this
-     */
-    public function setTo($name, $email)
-    {
-        $this->message->addTo($name, $email);
-        return $this;
-    }
-
-    /**
      * add mail receiver
      * @param string $name
      * @param string $email
@@ -181,18 +169,6 @@ class Mailer
     public function setBody($body)
     {
         $this->message->setBody($body);
-        return $this;
-    }
-
-    /**
-     * set mail attachment
-     * @param $name
-     * @param $path
-     * @return $this
-     */
-    public function setAttachment($name, $path)
-    {
-        $this->message->addAttachment($name, $path);
         return $this;
     }
 
