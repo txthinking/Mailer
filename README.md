@@ -22,6 +22,7 @@ $ok = (new Mailer($server))
     ->setSubject('Test Mailer')
     ->setBody('Hi, I <strong>love</strong> you.')
     ->addAttachment('host', '/etc/hosts')
+    ->setHeader('List-Unsubscribe', 'mailto:unsub@unsub@mydomain.com')
     ->send();
 var_dump($ok);
 ```

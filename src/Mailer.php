@@ -172,6 +172,18 @@ class Mailer{
     }
 
     /**
+     * Set custom header
+     * @param $header
+     * @param $value
+     *
+     * @return $this
+     */
+    public function setHeader($header, $value){
+        $this->message->setHeader($header, $value);
+        return $this;
+    }
+
+    /**
      *  Send the message...
      * @return boolean
      */

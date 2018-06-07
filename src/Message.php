@@ -335,6 +335,19 @@ class Message
     }
 
     /**
+     * Set customer header
+     * @param $header
+     * @param $value
+     *
+     * @return $this
+     */
+    public function setHeader($header, $value)
+    {
+        $this->header[$header] = $value;
+        return $this;
+    }
+
+    /**
      * Create mail header
      * @return $this
      */
