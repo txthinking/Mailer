@@ -6,13 +6,13 @@
 class TestCase extends \PHPUnit_Framework_TestCase
 {
     /** SMTP server to test against */
-    const SERVER = 'mailtrap.io';
+    const SERVER = 'smtp.mailtrap.io';
     /** plain text port */
-    const PORT = 25;
+    const PORT = 2525;
     /** TLS port */
     const PORT_TLS = 465;
     /** SSL port (not supported by mailtrap currently */
-    const PORT_SSL = 25;
+    const PORT_SSL = 0;
     /** user for LOGIN auth */
     const USER = 'e3f534cfe656f4';
     /** password for LOGIN auth */

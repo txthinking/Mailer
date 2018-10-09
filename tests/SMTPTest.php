@@ -8,7 +8,7 @@
 
 use Tx\Mailer\SMTP;
 use Tx\Mailer\Message;
-use ERB\Testing\Tools\TestHelper;
+use \Monolog\Logger;
 
 /**
  * Class SMTPTest
@@ -26,48 +26,30 @@ class SMTPTest extends TestCase
     protected $smtp;
 
     /**
-     * @var TestHelper
+     * @var  Message
      */
-    protected $testHelper;
-
-    /** @var  Message */
     protected $message;
-
 
     public function setup()
     {
-        $this->smtp = new SMTP();
-        $this->testHelper = new TestHelper();
         $this->message = new Message();
-        $this->message->setFrom('You', 'nobody@nowhere.no')
-                ->addTo('Them', 'them@nowhere.no')
-                ->setSubject('This is a test')
-                ->setBody('This is a test part two');
+        $this->message
+            ->setFrom(self::FROM_NAME, self::FROM_EMAIL) // your name, your email
+            //->setFakeFrom('Hello', 'bot@fakeemail.com') // a fake name, a fake email
+            ->addTo(self::TO_NAME, self::TO_EMAIL)
+            ->addCc(self::CC_NAME, self::CC_EMAIL)
+            ->addBcc(self::BCC_NAME, self::BCC_EMAIL)
+            ->setSubject('Test SMTP ' . time())
+            ->setBody('<h1>for test</h1>')
+            ->addAttachment('test', __FILE__);
         usleep(self::DELAY);
     }
 
-    public function testSetServer()
+    public function testSend()
     {
-        $result = $this->smtp->setServer('localhost', '25', null);
-        $this->assertEquals('localhost', $this->testHelper->getPropertyValue($this->smtp, 'host'));
-        $this->assertEquals('25', $this->testHelper->getPropertyValue($this->smtp, 'port'));
-        $this->assertSame($this->smtp, $result);
-        usleep(self::DELAY);
-    }
-
-    public function testSetAuth()
-    {
-        $result = $this->smtp->setAuth('none', 'none');
-
-        $this->assertEquals('none', $this->testHelper->getPropertyValue($this->smtp, 'username'));
-        $this->assertEquals('none', $this->testHelper->getPropertyValue($this->smtp, 'password'));
-        $this->assertSame($this->smtp, $result);
-        usleep(self::DELAY);
-    }
-
-    public function testMessage()
-    {
-        $this->smtp->setServer(self::SERVER, self::PORT, null)
+        $this->smtp = new SMTP(new Logger('SMTP'));
+        $this->smtp
+            ->setServer(self::SERVER, self::PORT)
             ->setAuth(self::USER, self::PASS);
 
         $status = $this->smtp->send($this->message);
@@ -75,40 +57,48 @@ class SMTPTest extends TestCase
         usleep(self::DELAY);
     }
 
-    public function testTLSMessage()
+    public function testTLSSend()
     {
-        $this->smtp->setServer(self::SERVER, self::PORT, 'tls')
-                   ->setAuth(self::USER, self::PASS);
+        $this->smtp = new SMTP(new Logger('SMTP.tls'));
+        $this->smtp
+            ->setServer(self::SERVER, self::PORT_TLS, 'tls')
+            ->setAuth(self::USER, self::PASS);
 
         $status = $this->smtp->send($this->message);
         $this->assertTrue($status);
         usleep(self::DELAY);
     }
 
-    public function testTLSv10Message()
+    public function testTLSv10Send()
     {
-        $this->smtp->setServer(self::SERVER, self::PORT, 'tlsv1.0')
-                   ->setAuth(self::USER, self::PASS);
+        $this->smtp = new SMTP(new Logger('SMTP.tlsv1.0'));
+        $this->smtp
+            ->setServer(self::SERVER, self::PORT_TLS, 'tlsv1.0')
+            ->setAuth(self::USER, self::PASS);
 
         $status = $this->smtp->send($this->message);
         $this->assertTrue($status);
         usleep(self::DELAY);
     }
 
-    public function testTLSv11Message()
+    public function testTLSv11Send()
     {
-        $this->smtp->setServer(self::SERVER, self::PORT, 'tlsv1.1')
-                   ->setAuth(self::USER, self::PASS);
+        $this->smtp = new SMTP(new Logger('SMTP.tlsv1.1'));
+        $this->smtp
+            ->setServer(self::SERVER, self::PORT_TLS, 'tlsv1.1')
+            ->setAuth(self::USER, self::PASS);
 
         $status = $this->smtp->send($this->message);
         $this->assertTrue($status);
         usleep(self::DELAY);
     }
 
-    public function testTLSv12Message()
+    public function testTLSv12Send()
     {
-        $this->smtp->setServer(self::SERVER, self::PORT, 'tlsv1.2')
-                   ->setAuth(self::USER, self::PASS);
+        $this->smtp = new SMTP(new Logger('SMTP.tlsv1.2'));
+        $this->smtp
+            ->setServer(self::SERVER, self::PORT_TLS, 'tlsv1.2')
+            ->setAuth(self::USER, self::PASS);
 
         $status = $this->smtp->send($this->message);
         $this->assertTrue($status);
@@ -120,17 +110,13 @@ class SMTPTest extends TestCase
      */
     public function testConnectSMTPException()
     {
-        $this->smtp->setServer('localhost', "99999", null)
+        $this->smtp = new SMTP(new Logger('SMTP.FakePort'));
+        $this->smtp
+            ->setServer('localhost', "99999", null)
             ->setAuth('none', 'none');
-        $message = new Message();
-        $message->setFrom('You', 'nobody@nowhere.no')
-            ->addTo('Them', 'them@nowhere.no')
-            ->setSubject('This is a test')
-            ->setBody('This is a test part two');
 
-        $this->smtp->send($message);
+        $this->smtp->send($this->message);
         usleep(self::DELAY);
     }
-
 
 }

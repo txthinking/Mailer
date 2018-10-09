@@ -58,7 +58,7 @@ class Mailer
      * set server and port
      * @param string $host server
      * @param int $port port
-     * @param string $secure ssl tls
+     * @param string $secure ssl tls tlsv1.0 tlsv1.1 tlsv1.2
      * @return $this
      */
     public function setServer($host, $port, $secure=null)

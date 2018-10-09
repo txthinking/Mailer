@@ -9,36 +9,8 @@ use \Monolog\Logger;
 class MailerTest extends TestCase
 {
 
-    /** @var  SMTP */
-    protected $smtp;
-    /** @var  Message */
-    protected $message;
-
     public function setup()
     {
-        $this->smtp = new SMTP(new Logger('SMTP'));
-        $this->message = new Message();
-    }
-
-    public function testSMTP()
-    {
-        $this->smtp
-            ->setServer(self::SERVER, self::PORT)
-            ->setAuth(self::USER, self::PASS); // email, password
-
-        $this->message
-            ->setFrom(self::FROM_NAME, self::FROM_EMAIL) // your name, your email
-            //->setFakeFrom('Hello', 'bot@fakeemail.com') // a fake name, a fake email
-            ->addTo(self::TO_NAME, self::TO_EMAIL)
-            ->addCc(self::CC_NAME, self::CC_EMAIL)
-            ->addBcc(self::BCC_NAME, self::BCC_EMAIL)
-            ->setSubject('Test SMTP ' . time())
-            ->setBody('<h1>for test</h1>')
-            ->addAttachment('test', __FILE__);
-
-        $status = $this->smtp->send($this->message);
-        $this->assertTrue($status);
-        usleep(self::DELAY);
     }
 
     public function testSend()

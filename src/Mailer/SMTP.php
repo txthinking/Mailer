@@ -42,7 +42,7 @@ class SMTP
     protected $port;
 
     /**
-     * smtp secure ssl tls
+     * smtp secure ssl tls tlsv1.0 tlsv1.1 tlsv1.2
      */
     protected $secure;
 
@@ -103,7 +103,7 @@ class SMTP
      * set server and port
      * @param string $host server
      * @param int $port port
-     * @param string $secure ssl tls
+     * @param string $secure ssl tls tlsv1.0 tlsv1.1 tlsv1.2
      * @return $this
      */
     public function setServer($host, $port, $secure=null)
@@ -169,7 +169,7 @@ class SMTP
         $this->connect()
             ->ehlo();
 
-        if (substr($this->secure, 0, 3) === 'tls') {
+        if ($this->secure === 'tls' || $this->secure === 'tlsv1.0' || $this->secure === 'tlsv1.1' | $this->secure === 'tlsv1.2') {
             $this->starttls()
                 ->ehlo();
         }
