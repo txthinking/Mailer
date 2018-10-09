@@ -85,6 +85,36 @@ class SMTPTest extends TestCase
         usleep(self::DELAY);
     }
 
+    public function testTLSv10Message()
+    {
+        $this->smtp->setServer(self::SERVER, self::PORT, 'tlsv1.0')
+                   ->setAuth(self::USER, self::PASS);
+
+        $status = $this->smtp->send($this->message);
+        $this->assertTrue($status);
+        usleep(self::DELAY);
+    }
+
+    public function testTLSv11Message()
+    {
+        $this->smtp->setServer(self::SERVER, self::PORT, 'tlsv1.1')
+                   ->setAuth(self::USER, self::PASS);
+
+        $status = $this->smtp->send($this->message);
+        $this->assertTrue($status);
+        usleep(self::DELAY);
+    }
+
+    public function testTLSv12Message()
+    {
+        $this->smtp->setServer(self::SERVER, self::PORT, 'tlsv1.2')
+                   ->setAuth(self::USER, self::PASS);
+
+        $status = $this->smtp->send($this->message);
+        $this->assertTrue($status);
+        usleep(self::DELAY);
+    }
+
     /**
      * @expectedException \Tx\Mailer\Exceptions\SMTPException
      */

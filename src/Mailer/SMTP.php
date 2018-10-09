@@ -169,10 +169,11 @@ class SMTP
         $this->connect()
             ->ehlo();
 
-        if ($this->secure === 'tls'){
+        if (substr($this->secure, 0, 3) === 'tls') {
             $this->starttls()
                 ->ehlo();
         }
+
         if ($this->username !== null || $this->password !== null) {
             $this->authLogin();
         } elseif ($this->oauthToken !== null) {
@@ -224,7 +225,27 @@ class SMTP
         if ($code !== '220'){
             throw new CodeException('220', $code, array_pop($this->resultStack));
         }
-        if(!\stream_socket_enable_crypto($this->smtp, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
+
+        if ($this->secure !== 'tls' && version_compare(phpversion(), '5.6.0', '<')) {
+            throw new CryptoException('Crypto type expected PHP 5.6 or greater');
+        }
+
+        switch ($this->secure) {
+            case 'tlsv1.0':
+                $crypto_type = STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT;
+                break;
+            case 'tlsv1.1':
+                $crypto_type = STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT;
+                break;
+            case 'tlsv1.2':
+                $crypto_type = STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
+                break;
+            default:
+                $crypto_type = STREAM_CRYPTO_METHOD_TLS_CLIENT;
+                break;
+        }
+
+        if(!\stream_socket_enable_crypto($this->smtp, true, $crypto_type)) {
             throw new CryptoException("Start TLS failed to enable crypto");
         }
         return $this;
