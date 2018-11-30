@@ -344,10 +344,12 @@ class Message
         $this->header['Bcc'] = substr($this->header['Bcc'], 0, -2);
 
         $replyToName = "";
-        if(!empty($this->replyToName)){
-            $replyToName = sprintf("=?utf-8?B?%s?= ", base64_encode($this->replyToName));
+        if(!empty($this->replyToEmail)){
+            if(!empty($this->replyToName)){
+                $replyToName = sprintf("=?utf-8?B?%s?= ", base64_encode($this->replyToName));
+            }
+            $this->header['Reply-To'] = $replyToName . "<" . $this->replyToEmail . ">";
         }
-        $this->header['Reply-To'] = $replyToName . "<" . $this->replyToEmail . ">";
 
         if(empty($this->subject)){
             $subject = '';
