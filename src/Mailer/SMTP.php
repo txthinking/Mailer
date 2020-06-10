@@ -241,7 +241,9 @@ class SMTP
                 $crypto_type = STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
                 break;
             default:
-                $crypto_type = STREAM_CRYPTO_METHOD_TLS_CLIENT;
+                $crypto_type = STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT |
+                               STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT |
+                               STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
                 break;
         }
 
