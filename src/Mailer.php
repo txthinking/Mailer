@@ -185,6 +185,18 @@ class Mailer
     }
 
     /**
+     * set mail reply-to
+     * @param string $name
+     * @param string $email
+     * @return $this
+     */
+    public function setReplyTo($name, $email)
+    {
+        $this->message->setReplyTo($name, $email);
+        return $this;
+    }
+
+    /**
      *  Send the message...
      * @return boolean
      */
