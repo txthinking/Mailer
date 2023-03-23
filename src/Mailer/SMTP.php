@@ -47,6 +47,11 @@ class SMTP
     protected $secure;
 
     /**
+     * smtp allow insecure ssl
+     */
+    protected $allowInsecure;
+
+    /**
      * EHLO message
      */
     protected $ehlo;
@@ -106,11 +111,12 @@ class SMTP
      * @param string $secure ssl tls tlsv1.0 tlsv1.1 tlsv1.2
      * @return $this
      */
-    public function setServer($host, $port, $secure=null)
+    public function setServer($host, $port, $secure=null, $allowInsecure=null)
     {
         $this->host = $host;
         $this->port = $port;
         $this->secure = $secure;
+        $this->allowInsecure = $allowInsecure;
         if(!$this->ehlo) $this->ehlo = $host;
         $this->logger && $this->logger->debug("Set: the server");
         return $this;
@@ -197,7 +203,25 @@ class SMTP
     {
         $this->logger && $this->logger->debug("Connecting to {$this->host} at {$this->port}");
         $host = ($this->secure == 'ssl') ? 'ssl://' . $this->host : $this->host;
-        $this->smtp = @fsockopen($host, $this->port);
+        // Create connection
+        $context = null;
+        if ($this->allowInsecure) {
+            $context = stream_context_create([
+                'ssl' => [
+                    'security_level' => 0,
+                    'verify_peer' => false,
+                    'verify_peer_name' => false
+                ]
+            ]);
+        }
+        $this->smtp = stream_socket_client(
+            $host.':'.$this->port,
+            $error_code,
+            $error_message,
+            ini_get('default_socket_timeout'),
+            STREAM_CLIENT_CONNECT,
+            $context
+        );
         //set block mode
         //    stream_set_blocking($this->smtp, 1);
         if (!$this->smtp){
