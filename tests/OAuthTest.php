@@ -11,7 +11,7 @@ class OAuthTest extends TestCase
     public function testOAuth2()
     {
         if(!self::OAUTH_TOKEN){
-            return;
+            $this->markTestSkipped('No oauth token set, test skipped');
         }
         $mail = new Mailer(new Logger('Mailer.OAuth'));
         $status = $mail->setServer(self::OAUTH_SERVER, self::OAUTH_PORT, 'tls')

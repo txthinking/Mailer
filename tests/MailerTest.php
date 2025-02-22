@@ -9,7 +9,7 @@ use \Monolog\Logger;
 class MailerTest extends TestCase
 {
 
-    public function setup()
+    public function setUp(): void
     {
     }
 

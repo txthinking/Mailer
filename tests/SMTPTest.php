@@ -30,7 +30,7 @@ class SMTPTest extends TestCase
      */
     protected $message;
 
-    public function setup()
+    public function setUp(): void
     {
         $this->message = new Message();
         $this->message
@@ -71,6 +71,11 @@ class SMTPTest extends TestCase
 
     public function testTLSv10Send()
     {
+        if (!defined('STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT')) {
+            $this->markTestSkipped('TLS 1.0 not supported by PHP version');
+        }
+
+
         $this->smtp = new SMTP(new Logger('SMTP.tlsv1.0'));
         $this->smtp
             ->setServer(self::SERVER, self::PORT_TLS, 'tlsv1.0')
@@ -105,11 +110,9 @@ class SMTPTest extends TestCase
         usleep(self::DELAY);
     }
 
-    /**
-     * @expectedException \Tx\Mailer\Exceptions\SMTPException
-     */
     public function testConnectSMTPException()
     {
+        $this->expectException(\Tx\Mailer\Exceptions\SMTPException::class);
         $this->smtp = new SMTP(new Logger('SMTP.FakePort'));
         $this->smtp
             ->setServer('localhost', "99999", null)
