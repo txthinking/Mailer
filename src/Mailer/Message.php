@@ -358,7 +358,7 @@ class Message
         }
         $this->header['Subject'] = $subject;
 
-        $this->header['Message-ID'] = '<' . md5(uniqid()) . '@' . $this->fromEmail . '>';
+        $this->header['Message-ID'] = '<' . md5(uniqid()) . $this->fromEmail . '>';
         $this->header['X-Priority'] = '3';
         $this->header['X-Mailer'] = 'Mailer (https://github.com/txthinking/Mailer)';
         $this->header['MIME-Version'] = '1.0';
