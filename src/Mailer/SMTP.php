@@ -255,6 +255,12 @@ class SMTP
             throw new CryptoException('Crypto type expected PHP 5.6 or greater');
         }
 
+        if ($this->allowInsecure) {
+            stream_context_set_option($this->smtp, 'ssl', 'verify_peer', false);
+            stream_context_set_option($this->smtp, 'ssl', 'verify_peer_name', false);
+            stream_context_set_option($this->smtp, 'ssl', 'allow_self_signed', true);
+        }
+
         if(!\stream_socket_enable_crypto($this->smtp, true, STREAM_CRYPTO_METHOD_ANY_CLIENT)) {
             throw new CryptoException("Start TLS failed to enable crypto");
         }
