@@ -215,7 +215,7 @@ class SMTP
                 ]
             ]);
         }
-        $this->smtp = stream_socket_client(
+        $this->smtp = @stream_socket_client(
             $host.':'.$this->port,
             $error_code,
             $error_message,
