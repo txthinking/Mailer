@@ -108,7 +108,8 @@ class SMTP
      * set server and port
      * @param string $host server
      * @param int $port port
-     * @param string $secure ssl tls tlsv1.0 tlsv1.1 tlsv1.2
+     * @param string $secure ssl tls
+     * @param bool $allowInsecure skip certificate verification?
      * @return $this
      */
     public function setServer($host, $port, $secure=null, $allowInsecure=null)
@@ -116,7 +117,7 @@ class SMTP
         $this->host = $host;
         $this->port = $port;
         $this->secure = $secure;
-        $this->allowInsecure = $allowInsecure;
+        $this->allowInsecure = (bool) $allowInsecure;
         if(!$this->ehlo) $this->ehlo = $host;
         $this->logger && $this->logger->debug("Set: the server");
         return $this;
@@ -254,24 +255,7 @@ class SMTP
             throw new CryptoException('Crypto type expected PHP 5.6 or greater');
         }
 
-        switch ($this->secure) {
-            case 'tlsv1.0':
-                $crypto_type = STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT;
-                break;
-            case 'tlsv1.1':
-                $crypto_type = STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT;
-                break;
-            case 'tlsv1.2':
-                $crypto_type = STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
-                break;
-            default:
-                $crypto_type = STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT |
-                               STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT |
-                               STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
-                break;
-        }
-
-        if(!\stream_socket_enable_crypto($this->smtp, true, $crypto_type)) {
+        if(!\stream_socket_enable_crypto($this->smtp, true, STREAM_CRYPTO_METHOD_ANY_CLIENT)) {
             throw new CryptoException("Start TLS failed to enable crypto");
         }
         return $this;

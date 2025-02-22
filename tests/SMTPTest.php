@@ -69,47 +69,6 @@ class SMTPTest extends TestCase
         usleep(self::DELAY);
     }
 
-    public function testTLSv10Send()
-    {
-        if (!defined('STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT')) {
-            $this->markTestSkipped('TLS 1.0 not supported by PHP version');
-        }
-
-
-        $this->smtp = new SMTP(new Logger('SMTP.tlsv1.0'));
-        $this->smtp
-            ->setServer(self::SERVER, self::PORT_TLS, 'tlsv1.0')
-            ->setAuth(self::USER, self::PASS);
-
-        $status = $this->smtp->send($this->message);
-        $this->assertTrue($status);
-        usleep(self::DELAY);
-    }
-
-    public function testTLSv11Send()
-    {
-        $this->smtp = new SMTP(new Logger('SMTP.tlsv1.1'));
-        $this->smtp
-            ->setServer(self::SERVER, self::PORT_TLS, 'tlsv1.1')
-            ->setAuth(self::USER, self::PASS);
-
-        $status = $this->smtp->send($this->message);
-        $this->assertTrue($status);
-        usleep(self::DELAY);
-    }
-
-    public function testTLSv12Send()
-    {
-        $this->smtp = new SMTP(new Logger('SMTP.tlsv1.2'));
-        $this->smtp
-            ->setServer(self::SERVER, self::PORT_TLS, 'tlsv1.2')
-            ->setAuth(self::USER, self::PASS);
-
-        $status = $this->smtp->send($this->message);
-        $this->assertTrue($status);
-        usleep(self::DELAY);
-    }
-
     public function testConnectSMTPException()
     {
         $this->expectException(\Tx\Mailer\Exceptions\SMTPException::class);
