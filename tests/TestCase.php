@@ -1,9 +1,13 @@
 <?php
 
+namespace Tx\Mailer\Tests;
+
+use PHPUnit\Framework\TestCase as BaseTestCase;
+
 /**
  * Configures the SMTP server used for testing
  */
-class TestCase extends \PHPUnit\Framework\TestCase
+class TestCase extends BaseTestCase
 {
     /** SMTP server to test against */
     const SERVER = 'smtp.mailtrap.io';

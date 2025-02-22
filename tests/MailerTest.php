@@ -1,17 +1,12 @@
 <?php
 
-use \Tx\Mailer;
-use \Tx\Mailer\SMTP;
-use \Tx\Mailer\Message;
-use \Tx\Mailer\Exceptions\SMTPException;
-use \Monolog\Logger;
+namespace Tx\Mailer\Tests;
+
+use Tx\Mailer;
+use Monolog\Logger;
 
 class MailerTest extends TestCase
 {
-
-    public function setUp(): void
-    {
-    }
 
     public function testSend()
     {
@@ -23,7 +18,7 @@ class MailerTest extends TestCase
             ->addTo(self::TO_NAME, self::TO_EMAIL)
             ->addCc(self::CC_NAME, self::CC_EMAIL)
             ->addBcc(self::BCC_NAME, self::BCC_EMAIL)
-            ->setSubject('Test Mailer '. time())
+            ->setSubject('Test Mailer ' . time())
             ->setBody('Hi, boy')
             ->addAttachment('test', __FILE__)
             ->send();

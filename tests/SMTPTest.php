@@ -1,14 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: msowers
- * Date: 3/31/15
- * Time: 10:57 AM
- */
+
+namespace Tx\Mailer\Tests;
 
 use Tx\Mailer\SMTP;
 use Tx\Mailer\Message;
-use \Monolog\Logger;
+use Monolog\Logger;
 
 /**
  * Class SMTPTest

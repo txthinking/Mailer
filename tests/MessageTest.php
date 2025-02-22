@@ -1,8 +1,7 @@
 <?php
 
-namespace Tx\Tests;
+namespace Tx\Mailer\Tests;
 
-use PHPUnit\Framework\TestCase;
 use Tx\Mailer\Message;
 
 class MessageTest extends TestCase
@@ -198,7 +197,7 @@ class MessageTest extends TestCase
         $messageString = $this->message->toString();
 
         // Verify all parts are present and properly encoded
-        
+
         $this->assertStringContainsString($expectedHeaderFrom, $messageString);
         $this->assertStringContainsString($expectedHeaderTo, $messageString);
         $this->assertStringContainsString($expectedHeaderSubject, $messageString);
