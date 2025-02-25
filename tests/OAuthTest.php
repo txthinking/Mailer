@@ -1,17 +1,16 @@
 <?php
 
-use \Tx\Mailer;
-use \Tx\Mailer\SMTP;
-use \Tx\Mailer\Message;
-use \Tx\Mailer\Exceptions\SMTPException;
-use \Monolog\Logger;
+namespace Tx\Mailer\Tests;
+
+use Tx\Mailer;
+use Monolog\Logger;
 
 class OAuthTest extends TestCase
 {
     public function testOAuth2()
     {
         if(!self::OAUTH_TOKEN){
-            return;
+            $this->markTestSkipped('No oauth token set, test skipped');
         }
         $mail = new Mailer(new Logger('Mailer.OAuth'));
         $status = $mail->setServer(self::OAUTH_SERVER, self::OAUTH_PORT, 'tls')

@@ -3,3 +3,4 @@ composer.lock
 .idea/
 docs/
 phpunit.xml
+.phpunit.result.cache
