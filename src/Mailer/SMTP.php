@@ -205,7 +205,7 @@ class SMTP
         $this->logger && $this->logger->debug("Connecting to {$this->host} at {$this->port}");
         $host = ($this->secure == 'ssl') ? 'ssl://' . $this->host : $this->host;
         // Create connection
-        $context = null;
+        $context = stream_context_create([]);
         if ($this->allowInsecure) {
             $context = stream_context_create([
                 'ssl' => [
@@ -223,10 +223,8 @@ class SMTP
             STREAM_CLIENT_CONNECT,
             $context
         );
-        //set block mode
-        //    stream_set_blocking($this->smtp, 1);
         if (!$this->smtp){
-            throw new SMTPException("Could not open SMTP Port.");
+            throw new SMTPException("Could not open SMTP Port to $host:{$this->port}");
         }
         $code = $this->getCode();
         if ($code !== '220'){
