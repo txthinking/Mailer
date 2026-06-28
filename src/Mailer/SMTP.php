@@ -176,7 +176,7 @@ class SMTP
         $this->connect()
             ->ehlo();
 
-        if ($this->secure === 'tls' || $this->secure === 'tlsv1.0' || $this->secure === 'tlsv1.1' | $this->secure === 'tlsv1.2') {
+        if ($this->secure === 'tls' || $this->secure === 'tlsv1.0' || $this->secure === 'tlsv1.1' || $this->secure === 'tlsv1.2') {
             $this->starttls()
                 ->ehlo();
         }
