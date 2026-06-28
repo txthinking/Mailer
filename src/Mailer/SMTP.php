@@ -42,6 +42,11 @@ class SMTP
     protected $port;
 
     /**
+     * socket timeout in seconds (connect + read/write)
+     */
+    protected $timeout;
+
+    /**
      * smtp secure ssl tls tlsv1.0 tlsv1.1 tlsv1.2
      */
     protected $secure;
@@ -102,6 +107,7 @@ class SMTP
     public function __construct(LoggerInterface $logger=null)
     {
         $this->logger = $logger;
+        $this->timeout = (int) ini_get('default_socket_timeout');
     }
 
     /**
@@ -157,6 +163,18 @@ class SMTP
     public function setEhlo($ehlo)
     {
         $this->ehlo = $ehlo;
+        return $this;
+    }
+
+    /**
+     * set the socket timeout in seconds, applied to both connecting and
+     * to each read/write while talking to the server
+     * @param int $timeout
+     * @return $this
+     */
+    public function setTimeout($timeout)
+    {
+        $this->timeout = (int) $timeout;
         return $this;
     }
 
@@ -219,13 +237,14 @@ class SMTP
             $host.':'.$this->port,
             $error_code,
             $error_message,
-            ini_get('default_socket_timeout'),
+            $this->timeout,
             STREAM_CLIENT_CONNECT,
             $context
         );
         if (!$this->smtp){
             throw new SMTPException("Could not open SMTP Port to $host:{$this->port}");
         }
+        stream_set_timeout($this->smtp, $this->timeout);
         $code = $this->getCode();
         if ($code !== '220'){
             throw new CodeException('220', $code, array_pop($this->resultStack));
@@ -449,28 +468,81 @@ class SMTP
     protected function pushStack($string)
     {
         $this->commandStack[] = $string;
-        fputs($this->smtp, $string, strlen($string));
+        if (fputs($this->smtp, $string, strlen($string)) === false) {
+            throw new SMTPException("Failed to write to SMTP socket");
+        }
         $this->logger && $this->logger->debug('Sent: '. $string);
         return $this->getCode();
     }
 
     /**
-     * get smtp response code
-     * once time has three digital and a space
-     * @return string
-     * @throws SMTPException
+     * Read one complete SMTP reply and return its 3-digit status code.
+     *
+     * An SMTP reply may span several lines (RFC 5321 §4.2.1): continuation
+     * lines have the form "NNN-text", the final line "NNN text" (or "NNN").
+     * All lines are read and reassembled into a single reply, which is pushed
+     * as one entry onto $this->resultStack -- so it stays aligned with
+     * $this->commandStack (one result per command) and CodeException can
+     * surface the whole reply, not just its last line.
+     *
+     * @return string the 3-digit reply code
+     * @throws SMTPException on a closed/timed-out connection or an unparseable reply
      */
     protected function getCode()
     {
-        while ($str = fgets($this->smtp, 515)) {
-            $this->logger && $this->logger->debug("Got: ". $str);
-            $this->resultStack[] = $str;
-            if(substr($str,3,1) == " ") {
-                $code = substr($str,0,3);
-                return $code;
+        $code = null;
+        $reply = '';
+
+        do {
+            $line = $this->readLine();
+            if ($line === null) {
+                $meta = stream_get_meta_data($this->smtp);
+                if (!empty($meta['timed_out'])) {
+                    throw new SMTPException("SMTP read timed out after {$this->timeout} seconds");
+                }
+                throw new SMTPException("SMTP Server did not respond with anything I recognized");
+            }
+
+            $this->logger && $this->logger->debug("Got: " . $line);
+            $reply .= $line;
+
+            // RFC 5321 §4.2.1: "NNN " (or bare "NNN") is the final line,
+            // "NNN-" marks a continuation line that must be followed by more.
+            if (!preg_match('/^(\d{3})([ -]?)/', $line, $m)) {
+                $this->resultStack[] = $reply;
+                throw new SMTPException("SMTP Server did not respond with anything I recognized");
+            }
+
+            $code      = $m[1];
+            $separator = $m[2];
+        } while ($separator === '-');
+
+        $this->resultStack[] = $reply;
+
+        return $code;
+    }
+
+    /**
+     * Read a single complete line (terminated by LF) from the socket,
+     * regardless of how long it is or how the OS chunks it. Reassembling the
+     * whole line here is what keeps a long reply from leaving a tail in the
+     * buffer that would desync the next getCode() call.
+     *
+     * @return string|null the line (including its trailing CRLF), or null on EOF/timeout
+     */
+    protected function readLine()
+    {
+        $line = '';
+        while (true) {
+            $chunk = fgets($this->smtp, 1024);
+            if ($chunk === false) {
+                return ($line === '') ? null : $line;   // EOF / timeout
+            }
+            $line .= $chunk;
+            if (substr($line, -1) === "\n") {
+                return $line;                            // got the full line
             }
         }
-        throw new SMTPException("SMTP Server did not respond with anything I recognized");
     }
 
 }
