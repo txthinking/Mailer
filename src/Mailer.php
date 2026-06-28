@@ -68,6 +68,18 @@ class Mailer
     }
 
     /**
+     * set the socket timeout in seconds, applied to both connecting and
+     * to each read/write while talking to the server
+     * @param int $timeout
+     * @return $this
+     */
+    public function setTimeout($timeout)
+    {
+        $this->smtp->setTimeout($timeout);
+        return $this;
+    }
+
+    /**
      * auth with server
      * @param string $username
      * @param string $password
