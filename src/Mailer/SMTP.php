@@ -176,7 +176,7 @@ class SMTP
         $this->connect()
             ->ehlo();
 
-        if ($this->secure === 'tls' || $this->secure === 'tlsv1.0' || $this->secure === 'tlsv1.1' | $this->secure === 'tlsv1.2') {
+        if ($this->secure === 'tls' || $this->secure === 'tlsv1.0' || $this->secure === 'tlsv1.1' || $this->secure === 'tlsv1.2') {
             $this->starttls()
                 ->ehlo();
         }
@@ -224,7 +224,10 @@ class SMTP
             $context
         );
         if (!$this->smtp){
-            throw new SMTPException("Could not open SMTP Port to $host:{$this->port}");
+            throw new SMTPException(
+                "Could not open SMTP Port to $host:{$this->port}" .
+                ($error_message ? " ($error_code: $error_message)" : '')
+            );
         }
         $code = $this->getCode();
         if ($code !== '220'){
@@ -259,8 +262,12 @@ class SMTP
             stream_context_set_option($this->smtp, 'ssl', 'allow_self_signed', true);
         }
 
-        if(!\stream_socket_enable_crypto($this->smtp, true, STREAM_CRYPTO_METHOD_ANY_CLIENT)) {
-            throw new CryptoException("Start TLS failed to enable crypto");
+        if(!@\stream_socket_enable_crypto($this->smtp, true, STREAM_CRYPTO_METHOD_ANY_CLIENT)) {
+            $err = error_get_last();
+            throw new CryptoException(
+                "Start TLS failed to enable crypto" .
+                (isset($err['message']) ? ": {$err['message']}" : '')
+            );
         }
         return $this;
     }
